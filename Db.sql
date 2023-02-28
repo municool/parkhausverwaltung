@@ -1,0 +1,103 @@
+-- Create a new database called 'Parkhausverwaltung'
+-- Connect to the 'master' database to run this snippet
+USE master
+GO
+-- Create the new database if it does not exist already
+IF NOT EXISTS (
+    SELECT name
+        FROM sys.databases
+        WHERE name = N'Parkhausverwaltung'
+)
+CREATE DATABASE Parkhausverwaltung
+GO
+
+
+USE Parkhausverwaltung
+GO
+
+-- Create a new table called 'Parkhaus' in schema 'SchemaName'
+-- Drop the table if it already exists
+IF OBJECT_ID('SchemaName.Parkhaus', 'U') IS NOT NULL
+DROP TABLE SchemaName.Parkhaus
+GO
+-- Create the table in the specified schema
+CREATE TABLE SchemaName.Parkhaus
+(
+    ParkhausId INT NOT NULL PRIMARY KEY, -- primary key column
+    Name [NVARCHAR](50) NOT NULL,
+    DayPrice [INT] NOT NULL,
+    DefaultPrice [INT] NOT NULL
+);
+GO
+
+-- Create a new table called 'Mieter' in schema 'SchemaName'
+-- Drop the table if it already exists
+IF OBJECT_ID('SchemaName.Mieter', 'U') IS NOT NULL
+DROP TABLE SchemaName.Mieter
+GO
+-- Create the table in the specified schema
+CREATE TABLE SchemaName.Mieter
+(
+    MieterId INT NOT NULL PRIMARY KEY, -- primary key column
+    Name [NVARCHAR](50) NOT NULL,
+    MieterCode INT NOT NULL UNIQUE,
+    ParkhausId INT NOT NULL FOREIGN KEY REFERENCES Parkhaus(ParkhausId),
+    SlotNr INT NOT NULL,
+    StartDate DATETIME NOT NULL,
+    EndDate DATETIME,
+    PaymentOpen BIT NOT NULL
+);
+GO
+
+-- Create a new table called 'Tarif' in schema 'SchemaName'
+-- Drop the table if it already exists
+IF OBJECT_ID('SchemaName.Tarif', 'U') IS NOT NULL
+DROP TABLE SchemaName.Tarif
+GO
+-- Create the table in the specified schema
+CREATE TABLE SchemaName.Tarif
+(
+    TarifId INT NOT NULL PRIMARY KEY, -- primary key column
+    ParkhausId INT NOT NULL FOREIGN KEY REFERENCES Parkhaus(ParkhausId),
+    Preis DECIMAL(10, 1) NOT NULL,
+    StartTime TIME NOT NULL,
+    EndTime TIME NOT NULL,
+    StartDate DATETIME NOT NULL,
+    EndDate DATETIME,
+    WorkDay BIT NOT NULL
+);
+GO
+
+-- Create a new table called 'FLoor' in schema 'SchemaName'
+-- Drop the table if it already exists
+IF OBJECT_ID('SchemaName.FLoor', 'U') IS NOT NULL
+DROP TABLE SchemaName.FLoor
+GO
+-- Create the table in the specified schema
+CREATE TABLE SchemaName.FLoor
+(
+    FLoorId INT NOT NULL PRIMARY KEY, -- primary key column
+    ParkhausId INT NOT NULL FOREIGN KEY REFERENCES Parkhaus(ParkhausId),
+    FloorNr INT NOT NULL,
+    SlotCount INT NOT NULL
+);
+GO
+
+-- Create a new table called 'Visit' in schema 'SchemaName'
+-- Drop the table if it already exists
+IF OBJECT_ID('SchemaName.Visit', 'U') IS NOT NULL
+DROP TABLE SchemaName.Visit
+GO
+-- Create the table in the specified schema
+CREATE TABLE SchemaName.Visit
+(
+    VisitId INT NOT NULL PRIMARY KEY, -- primary key column
+    ParkhausId INT NOT NULL FOREIGN KEY REFERENCES Parkhaus(ParkhausId),
+    Arrival DATETIME NOT NULL,
+    Departure DATETIME,
+    Cost DECIMAL(10,1) NOT NULL,
+    TicketNr INT,
+    MieterId INT FOREIGN KEY REFERENCES Mieter(MieterId),
+    SlotNr INT
+);
+GO

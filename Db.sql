@@ -17,11 +17,11 @@ GO
 
 -- Create a new table called 'Parkhaus' in schema 'SchemaName'
 -- Drop the table if it already exists
-IF OBJECT_ID('SchemaName.Parkhaus', 'U') IS NOT NULL
-DROP TABLE SchemaName.Parkhaus
+IF OBJECT_ID('Parkhaus', 'U') IS NOT NULL
+DROP TABLE Parkhaus
 GO
 -- Create the table in the specified schema
-CREATE TABLE SchemaName.Parkhaus
+CREATE TABLE Parkhaus
 (
     ParkhausId INT NOT NULL PRIMARY KEY, -- primary key column
     Name [NVARCHAR](50) NOT NULL,
@@ -32,11 +32,11 @@ GO
 
 -- Create a new table called 'Mieter' in schema 'SchemaName'
 -- Drop the table if it already exists
-IF OBJECT_ID('SchemaName.Mieter', 'U') IS NOT NULL
-DROP TABLE SchemaName.Mieter
+IF OBJECT_ID('Mieter', 'U') IS NOT NULL
+DROP TABLE Mieter
 GO
 -- Create the table in the specified schema
-CREATE TABLE SchemaName.Mieter
+CREATE TABLE Mieter
 (
     MieterId INT NOT NULL PRIMARY KEY, -- primary key column
     Name [NVARCHAR](50) NOT NULL,
@@ -51,11 +51,11 @@ GO
 
 -- Create a new table called 'Tarif' in schema 'SchemaName'
 -- Drop the table if it already exists
-IF OBJECT_ID('SchemaName.Tarif', 'U') IS NOT NULL
-DROP TABLE SchemaName.Tarif
+IF OBJECT_ID('Tarif', 'U') IS NOT NULL
+DROP TABLE Tarif
 GO
 -- Create the table in the specified schema
-CREATE TABLE SchemaName.Tarif
+CREATE TABLE Tarif
 (
     TarifId INT NOT NULL PRIMARY KEY, -- primary key column
     ParkhausId INT NOT NULL FOREIGN KEY REFERENCES Parkhaus(ParkhausId),
@@ -70,11 +70,11 @@ GO
 
 -- Create a new table called 'FLoor' in schema 'SchemaName'
 -- Drop the table if it already exists
-IF OBJECT_ID('SchemaName.FLoor', 'U') IS NOT NULL
-DROP TABLE SchemaName.FLoor
+IF OBJECT_ID('FLoor', 'U') IS NOT NULL
+DROP TABLE FLoor
 GO
 -- Create the table in the specified schema
-CREATE TABLE SchemaName.FLoor
+CREATE TABLE FLoor
 (
     FLoorId INT NOT NULL PRIMARY KEY, -- primary key column
     ParkhausId INT NOT NULL FOREIGN KEY REFERENCES Parkhaus(ParkhausId),
@@ -85,11 +85,11 @@ GO
 
 -- Create a new table called 'Visit' in schema 'SchemaName'
 -- Drop the table if it already exists
-IF OBJECT_ID('SchemaName.Visit', 'U') IS NOT NULL
-DROP TABLE SchemaName.Visit
+IF OBJECT_ID('Visit', 'U') IS NOT NULL
+DROP TABLE Visit
 GO
 -- Create the table in the specified schema
-CREATE TABLE SchemaName.Visit
+CREATE TABLE Visit
 (
     VisitId INT NOT NULL PRIMARY KEY, -- primary key column
     ParkhausId INT NOT NULL FOREIGN KEY REFERENCES Parkhaus(ParkhausId),

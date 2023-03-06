@@ -5,6 +5,8 @@ using Parkhausverwaltung.Shared.Models;
 
 namespace Mieterverwaltung.Server.Controllers
 {
+    [ApiController]
+    [Route("[controller]")]
     public class MieterController : Controller
     {
         public MieterController(IDbContextFactory<ParkhausverwaltungContext> dbContextFactory)

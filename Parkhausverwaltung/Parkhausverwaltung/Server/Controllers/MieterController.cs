@@ -34,6 +34,9 @@ namespace Mieterverwaltung.Server.Controllers
         [HttpPost]
         public IActionResult Create([FromBody] Mieter mieter)
         {
+            var rnd = new Random();
+            mieter.MieterCode = rnd.Next(10000000, 99999999);
+
             using (var context = _dbContextFactory.CreateDbContext())
             {
                 context.Mieters.Add(mieter);

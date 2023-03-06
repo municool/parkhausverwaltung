@@ -23,7 +23,7 @@ GO
 -- Create the table in the specified schema
 CREATE TABLE Parkhaus
 (
-    ParkhausId INT NOT NULL PRIMARY KEY, -- primary key column
+    ParkhausId INT IDENTITY(10000,1) NOT NULL PRIMARY KEY, -- primary key column
     Name [NVARCHAR](50) NOT NULL,
     DayPrice [INT] NOT NULL,
     DefaultPrice [INT] NOT NULL
@@ -38,7 +38,7 @@ GO
 -- Create the table in the specified schema
 CREATE TABLE Mieter
 (
-    MieterId INT NOT NULL PRIMARY KEY, -- primary key column
+    MieterId INT IDENTITY(10000,1) NOT NULL PRIMARY KEY, -- primary key column
     Name [NVARCHAR](50) NOT NULL,
     MieterCode INT NOT NULL UNIQUE,
     ParkhausId INT NOT NULL FOREIGN KEY REFERENCES Parkhaus(ParkhausId),
@@ -57,7 +57,7 @@ GO
 -- Create the table in the specified schema
 CREATE TABLE Tarif
 (
-    TarifId INT NOT NULL PRIMARY KEY, -- primary key column
+    TarifId INT IDENTITY(10000,1) NOT NULL PRIMARY KEY, -- primary key column
     ParkhausId INT NOT NULL FOREIGN KEY REFERENCES Parkhaus(ParkhausId),
     Preis DECIMAL(10, 1) NOT NULL,
     StartTime TIME NOT NULL,
@@ -76,7 +76,7 @@ GO
 -- Create the table in the specified schema
 CREATE TABLE FLoor
 (
-    FLoorId INT NOT NULL PRIMARY KEY, -- primary key column
+    FLoorId INT IDENTITY(10000,1) NOT NULL PRIMARY KEY, -- primary key column
     ParkhausId INT NOT NULL FOREIGN KEY REFERENCES Parkhaus(ParkhausId),
     FloorNr INT NOT NULL,
     SlotCount INT NOT NULL
@@ -91,7 +91,7 @@ GO
 -- Create the table in the specified schema
 CREATE TABLE Visit
 (
-    VisitId INT NOT NULL PRIMARY KEY, -- primary key column
+    VisitId INT IDENTITY(10000,1) NOT NULL PRIMARY KEY, -- primary key column
     ParkhausId INT NOT NULL FOREIGN KEY REFERENCES Parkhaus(ParkhausId),
     Arrival DATETIME NOT NULL,
     Departure DATETIME,

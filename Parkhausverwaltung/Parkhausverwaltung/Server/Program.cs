@@ -1,11 +1,18 @@
-using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.EntityFrameworkCore;
+using Parkhausverwaltung.Server.Infrastructure;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllers().AddJsonOptions(x =>
+                x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 builder.Services.AddRazorPages();
+
+builder.Services.AddDbContextFactory<ParkhausverwaltungContext>(
+        options =>
+            options.UseSqlServer(builder.Configuration.GetConnectionString("DB")));
 
 var app = builder.Build();
 

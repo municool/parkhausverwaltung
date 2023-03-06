@@ -23,5 +23,5 @@ public partial class Visit
 
     public virtual Mieter? Mieter { get; set; }
 
-    public virtual Parkhau Parkhaus { get; set; } = null!;
+    public virtual Parkhaus Parkhaus { get; set; } = null!;
 }

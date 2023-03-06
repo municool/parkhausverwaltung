@@ -13,5 +13,5 @@ public partial class Floor
 
     public int SlotCount { get; set; }
 
-    public virtual Parkhau Parkhaus { get; set; } = null!;
+    public virtual Parkhaus Parkhaus { get; set; } = null!;
 }

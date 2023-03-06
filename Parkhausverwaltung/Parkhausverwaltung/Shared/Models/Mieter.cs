@@ -21,7 +21,7 @@ public partial class Mieter
 
     public bool PaymentOpen { get; set; }
 
-    public virtual Parkhau Parkhaus { get; set; } = null!;
+    public virtual Parkhaus Parkhaus { get; set; } = null!;
 
     public virtual ICollection<Visit> Visits { get; } = new List<Visit>();
 }

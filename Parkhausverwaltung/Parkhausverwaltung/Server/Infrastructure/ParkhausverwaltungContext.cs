@@ -20,7 +20,7 @@ public partial class ParkhausverwaltungContext : DbContext
 
     public virtual DbSet<Mieter> Mieters { get; set; }
 
-    public virtual DbSet<Parkhau> Parkhaus { get; set; }
+    public virtual DbSet<Parkhaus> Parkhaus { get; set; }
 
     public virtual DbSet<Tarif> Tarifs { get; set; }
 
@@ -66,7 +66,7 @@ public partial class ParkhausverwaltungContext : DbContext
                 .HasConstraintName("FK__Mieter__Parkhaus__276EDEB3");
         });
 
-        modelBuilder.Entity<Parkhau>(entity =>
+        modelBuilder.Entity<Parkhaus>(entity =>
         {
             entity.HasKey(e => e.ParkhausId).HasName("PK__Parkhaus__E7FDE3F48EE4CF3E");
 

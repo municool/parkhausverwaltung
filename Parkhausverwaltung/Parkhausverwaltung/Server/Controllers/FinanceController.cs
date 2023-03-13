@@ -28,7 +28,7 @@ namespace Parkhausverwaltung.Server.Controllers
 
             if(parkhaus == null)
             {
-                return BadRequest();
+                return BadRequest("Parkhaus existiert nicht!");
             }
 
             if(timeSpent.TotalHours > 24)

@@ -26,7 +26,8 @@ CREATE TABLE Parkhaus
     ParkhausId INT IDENTITY(10000,1) NOT NULL PRIMARY KEY, -- primary key column
     Name [NVARCHAR](50) NOT NULL,
     DayPrice [INT] NOT NULL,
-    DefaultPrice [INT] NOT NULL
+    DefaultPrice [INT] NOT NULL,
+    MonthlyPrice [INT] NOT NULL
 );
 GO
 

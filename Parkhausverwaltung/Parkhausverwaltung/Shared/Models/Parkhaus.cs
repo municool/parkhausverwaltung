@@ -13,6 +13,8 @@ public partial class Parkhaus
 
     public int DefaultPrice { get; set; }
 
+    public int MonthlyPrice { get; set; }
+
     public virtual ICollection<Floor> Floors { get; } = new List<Floor>();
 
     public virtual ICollection<Mieter> Mieters { get; } = new List<Mieter>();

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Parkhausverwaltung.Server.Infrastructure;
+using Parkhausverwaltung.Shared;
 using Parkhausverwaltung.Shared.Models;
 
 namespace Parkhausverwaltung.Server.Controllers
@@ -42,9 +43,58 @@ namespace Parkhausverwaltung.Server.Controllers
         }
 
         [HttpGet]
-        public void GetRevenueSummery(int parkhausId, DateTime start, DateTime End)
+        public ActionResult<List<RevenueSummary>> GetRevenueSummery(int parkhausId, DateTime start, DateTime end)
         {
+            Parkhaus? parkhaus;
+            using (var context = _dbContextFactory.CreateDbContext())
+            {
+                parkhaus = context.Parkhaus.Include(p => p.Visits).Include(p => p.Mieters).FirstOrDefault(p => p.ParkhausId == parkhausId);
+            }
+            
+            if(parkhaus == null)
+            {
+                return BadRequest("Parkhaus existiert nicht!");
+            }
 
+            var revenueSummaries = new List<RevenueSummary>();
+
+            //Complete Summary
+            var completeSummary = new RevenueSummary()
+            {
+                StartDate = start,
+                EndDate = end,
+                MieterCount = parkhaus.Mieters.Count(m => m.EndDate == null || m.EndDate > start),
+                MieterRevenue = parkhaus.Mieters.Count(m => m.EndDate == null || m.EndDate > start) * parkhaus.MonthlyPrice,
+                VisitorCount = parkhaus.Visits.Count(v => v.Arrival >= start && v.Departure <= end),
+                VisitorRevenue = parkhaus.Visits.Where(v => v.Arrival >= start && v.Departure <= end).Sum(v => v.Cost)
+            };
+            revenueSummaries.Add(completeSummary);
+
+            // Summaries by month
+            var currentMoment = start;
+            while(currentMoment != end)
+            {
+                var monthStart = currentMoment.AddDays(-1 * currentMoment.Day + 1);
+                var monthEnd = monthStart.AddMonths(1).AddSeconds(-1);
+                if(monthEnd >= end)
+                {
+                    currentMoment = end;
+                }
+
+                var monthlySummary = new RevenueSummary()
+                {
+                    StartDate = currentMoment,
+                    EndDate = monthEnd,
+                    MieterCount = parkhaus.Mieters.Count(m => m.EndDate == null || m.EndDate > currentMoment),
+                    MieterRevenue = parkhaus.Mieters.Count(m => m.EndDate == null || m.EndDate > currentMoment) * parkhaus.MonthlyPrice,
+                    VisitorCount = parkhaus.Visits.Count(v => v.Arrival >= currentMoment && v.Departure <= monthEnd),
+                    VisitorRevenue = parkhaus.Visits.Where(v => v.Arrival >= currentMoment && v.Departure <= monthEnd).Sum(v => v.Cost)
+                };
+
+                currentMoment = monthStart.AddMonths(1);
+            }
+
+            return Ok(revenueSummaries);
         }
 
         private Tarif GetNextTarifChange(List<Tarif> tarifs, TimeSpan currentMoment)

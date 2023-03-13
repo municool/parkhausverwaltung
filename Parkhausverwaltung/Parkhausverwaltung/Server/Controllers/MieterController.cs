@@ -7,7 +7,7 @@ namespace Mieterverwaltung.Server.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class MieterController : Controller
+    public class MieterController : ControllerBase
     {
         public MieterController(IDbContextFactory<ParkhausverwaltungContext> dbContextFactory)
         {

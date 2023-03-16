@@ -14,7 +14,6 @@ namespace Mieterverwaltung.Server.Controllers
             _dbContextFactory = dbContextFactory;
         }
 
-
         [HttpGet]
         public IEnumerable<Mieter> GetAllMieters()
         {
@@ -41,6 +40,9 @@ namespace Mieterverwaltung.Server.Controllers
 
             using (var context = _dbContextFactory.CreateDbContext())
             {
+                mieter.ParkhausId = mieter.Parkhaus.ParkhausId;
+                mieter.Parkhaus = null;
+
                 context.Mieters.Add(mieter);
                 context.SaveChanges();
             }

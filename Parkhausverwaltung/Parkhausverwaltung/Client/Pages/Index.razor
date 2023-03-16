@@ -1,10 +1,124 @@
 ﻿@page "/"
 
-<PageTitle>Index</PageTitle>
+@inject HttpClient http
 
-<h1>Hello, world!</h1>
+<PageTitle>Parkhäuser</PageTitle>
 
-Welcome to your new app.
+<h1>Parkhäuser</h1>
 
-<SurveyPrompt Title="How is Blazor working for you?" />
-x
+<RadzenButton Icon="add_circle_outline" style="margin-bottom: 10px" Text="New Parkhaus" Click="@InsertRow" Disabled=@(parkhausToInsert != null) />
+<RadzenDataGrid @ref="parkhausesGrid" AllowFiltering="true" AllowPaging="true" PageSize="5" AllowSorting="true"
+                Data="@parkhauses" TItem="Parkhaus" RowUpdate="@OnUpdateRow" RowCreate="@OnCreateRow">
+    <Columns>
+        <RadzenDataGridColumn TItem="Parkhaus" Property="Id" Title="Parkhaus Id" />
+        <RadzenDataGridColumn TItem="Parkhaus" Property="Name" Title="Parkhaus" />
+        <RadzenDataGridColumn TItem="Parkhaus" Context="whateaver" Filterable="false" Sortable="false" TextAlign="TextAlign.Center">
+            <Template Context="parkhaus">
+                <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Class="m-1" Click="@(args => EditRow(parkhaus))" @onclick:stopPropagation="true">
+                </RadzenButton>
+            </Template>
+        </RadzenDataGridColumn>
+        @*        <RadzenDataGridColumn TItem="Parkhaus" Context="parkhaus" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="80px">
+        <Template Context="parkhaus">one
+        <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Size="ButtonSize.Small" Class="m-2" Click="@(args => DeleteRow(parkhaus))" @onclick:stopPropagation="true">
+        </RadzenButton>
+        </Template>
+        <EditTemplate Context="parkhaus">
+        <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Size="ButtonSize.Small" Class="m-2" Click="@(args => DeleteRow(parkhaus))">
+        </RadzenButton>
+        </EditTemplate>
+        </RadzenDataGridColumn>*@
+    </Columns>
+</RadzenDataGrid>
+
+
+
+@code {
+    RadzenDataGrid<Parkhaus>? parkhausesGrid;
+    IEnumerable<Parkhaus> parkhauses = new List<Parkhaus>();
+
+    protected override async void OnInitialized()
+    {
+        base.OnInitialized();
+
+        parkhauses = (await http.GetFromJsonAsync<Parkhaus[]>("parkhaus"))?.ToList() ?? new List<Parkhaus>();
+        StateHasChanged();
+
+    }
+    async Task EditRow(Parkhaus parkhaus)
+    {
+        await parkhausesGrid.EditRow(parkhaus);
+    }
+
+    async void OnUpdateRow(Parkhaus parkhaus)
+    {
+        if (parkhaus == parkhausToInsert)
+        {
+            parkhausToInsert = null;
+        }
+
+        _ = await http.PostAsJsonAsync($"parkhaus/{parkhaus.ParkhausId}", parkhaus);
+        StateHasChanged();
+    }
+
+    async Task SaveRow(Parkhaus parkhaus)
+    {
+        if (parkhaus == parkhausToInsert)
+        {
+            parkhausToInsert = null;
+        }
+
+        await parkhausesGrid.UpdateRow(parkhaus);
+    }
+
+    void CancelEdit(Parkhaus parkhaus)
+    {
+        if (parkhaus == parkhausToInsert)
+        {
+            parkhausToInsert = null;
+        }
+
+        parkhausesGrid.CancelEditRow(parkhaus);
+
+    }
+
+    //async Task DeleteRow(Parkhaus parkhaus)
+    //{
+    //    if (parkhaus == parkhausToInsert)
+    //    {
+    //        parkhausToInsert = null;
+    //    }
+
+    //    if (parkhauss.Contains(parkhaus))
+    //    {
+    //        dbContext.Remove<Parkhaus>(parkhaus);
+
+    //        // For demo purposes only
+    //        parkhauss.Remove(parkhaus);
+
+    //        // For production
+    //        //dbContext.SaveChanges();
+
+    //        await parkhaussGrid.Reload();
+    //    }
+    //    else
+    //    {
+    //        parkhaussGrid.CancelEditRow(parkhaus);
+    //    }
+    //}
+
+    Parkhaus? parkhausToInsert;
+
+    async Task InsertRow()
+    {
+        parkhausToInsert = new Parkhaus();
+
+        await parkhausesGrid.InsertRow(parkhausToInsert);
+    }
+
+    async void OnCreateRow(Parkhaus parkhaus)
+    {
+        _ = await http.PostAsJsonAsync("parkhaus", parkhaus);
+        StateHasChanged();
+    }
+}

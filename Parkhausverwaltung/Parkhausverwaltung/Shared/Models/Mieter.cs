@@ -5,6 +5,11 @@ namespace Parkhausverwaltung.Shared.Models;
 
 public partial class Mieter
 {
+    public Mieter()
+    {
+        StartDate = DateTime.Today;
+    }
+
     public int MieterId { get; set; }
 
     public string Name { get; set; } = null!;

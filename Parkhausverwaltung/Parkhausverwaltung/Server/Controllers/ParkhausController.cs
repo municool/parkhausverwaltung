@@ -21,7 +21,7 @@ namespace Parkhausverwaltung.Server.Controllers
 
 
         [HttpGet]
-        public IEnumerable<Parkhaus> GetAllParkhauss()
+        public IEnumerable<Parkhaus> GetAllParkhauses()
         {
             using (var context = _dbContextFactory.CreateDbContext())
             {
@@ -141,16 +141,16 @@ namespace Parkhausverwaltung.Server.Controllers
         }
 
         [HttpPost("{parkhausId}")]
-        public ActionResult ParkLogout(int parkhausId, [FromBody] string code, [FromBody] bool isMieter)
+        public ActionResult ParkLogout(int parkhausId, [FromBody] (string code, bool isMieter) body)
         {
             using (var context = _dbContextFactory.CreateDbContext())
             {
                 Visit? visit;
-                if (isMieter)
+                if (body.isMieter)
                 {
                     try
                     {
-                        visit = context.Visits.Include(v => v.Mieter).FirstOrDefault(v => v.Mieter != null && v.Mieter.MieterCode == int.Parse(code) && v.Departure == null && !v.HasLeft && v.ParkhausId == parkhausId);
+                        visit = context.Visits.Include(v => v.Mieter).FirstOrDefault(v => v.Mieter != null && v.Mieter.MieterCode == int.Parse(body.code) && v.Departure == null && !v.HasLeft && v.ParkhausId == parkhausId);
                     }
                     catch (Exception ex)
                     {
@@ -159,7 +159,7 @@ namespace Parkhausverwaltung.Server.Controllers
                 }
                 else
                 {
-                    visit = context.Visits.FirstOrDefault(v => v.TicketNr == code && !v.HasLeft && v.ParkhausId == parkhausId);
+                    visit = context.Visits.FirstOrDefault(v => v.TicketNr == body.code && !v.HasLeft && v.ParkhausId == parkhausId);
 
                     if(visit != null && visit.Departure == null)
                     {

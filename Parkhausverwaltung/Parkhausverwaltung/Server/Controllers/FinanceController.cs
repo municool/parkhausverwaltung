@@ -16,30 +16,46 @@ namespace Parkhausverwaltung.Server.Controllers
         }
 
         [HttpGet]
-        public ActionResult<decimal> CalculateCost(int parkhausId, DateTime start, DateTime end)
+        public ActionResult<Visit> PayParkTicket(int parkhausId, string ticketNr)
         {
-            var timeSpent = end - start;
             Parkhaus? parkhaus;
+            Visit? visit;
 
-            using(var context = _dbContextFactory.CreateDbContext())
+            using (var context = _dbContextFactory.CreateDbContext())
             {
+                visit = context.Visits.FirstOrDefault(v => v.TicketNr == ticketNr && v.ParkhausId == parkhausId);
                 parkhaus = context.Parkhaus.Include(p => p.Tarifs).FirstOrDefault(p => p.ParkhausId == parkhausId);
             }
 
-            if(parkhaus == null)
+            if (parkhaus == null)
             {
                 return BadRequest("Parkhaus existiert nicht!");
             }
+            if (visit == null)
+            {
+                return BadRequest("Kein Ticket mit dieser Nummer gefunden!");
+            }
 
-            if(timeSpent.TotalHours > 24)
+            visit.Departure = DateTime.Now;
+            var timeSpent = visit.Departure.Value - visit.Arrival;
+
+            if (timeSpent.TotalHours > 24)
             {
                 var daysCount = Math.Ceiling(timeSpent.TotalHours / 24);
-                return Ok(daysCount * parkhaus.DayPrice);
+                visit.Cost = (decimal)daysCount * parkhaus.DayPrice;
             }
             else
             {
-                return Ok(CalculateCostHourRates(parkhaus, start, end));
+                visit.Cost = CalculateCostHourRates(parkhaus, visit.Arrival, visit.Departure.Value);
             }
+
+            using (var context = _dbContextFactory.CreateDbContext())
+            {
+                context.Visits.Update(visit);
+                context.SaveChanges();
+            }
+
+            return Ok(visit);
         }
 
         [HttpGet]

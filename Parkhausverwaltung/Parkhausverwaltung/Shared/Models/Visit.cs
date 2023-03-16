@@ -15,11 +15,13 @@ public partial class Visit
 
     public decimal Cost { get; set; }
 
-    public int? TicketNr { get; set; }
+    public string? TicketNr { get; set; }
 
     public int? MieterId { get; set; }
 
     public int? SlotNr { get; set; }
+
+    public bool HasLeft { get; set; }
 
     public virtual Mieter? Mieter { get; set; }
 

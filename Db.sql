@@ -97,8 +97,9 @@ CREATE TABLE Visit
     Arrival DATETIME NOT NULL,
     Departure DATETIME,
     Cost DECIMAL(10,1) NOT NULL,
-    TicketNr INT,
+    TicketNr VARCHAR(50),
     MieterId INT FOREIGN KEY REFERENCES Mieter(MieterId),
-    SlotNr INT
+    SlotNr INT,
+    HasLeft BIT
 );
 GO

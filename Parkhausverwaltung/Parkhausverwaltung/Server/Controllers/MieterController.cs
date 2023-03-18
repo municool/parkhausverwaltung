@@ -23,6 +23,15 @@ namespace Mieterverwaltung.Server.Controllers
             }
         }
 
+        [HttpGet("GetByParkhausId/{parkhausId}")]
+        public IEnumerable<Mieter> GetByParkhausId(int parkhausId)
+        {
+            using (var context = _dbContextFactory.CreateDbContext())
+            {
+                return context.Mieters.Where(m => m.ParkhausId == parkhausId).ToList();
+            }
+        }
+
         [HttpGet("{id}")]
         public Mieter? GetById(int id)
         {

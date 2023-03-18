@@ -5,23 +5,26 @@
 
 <PageTitle>Parkhäuser</PageTitle>
 
-<h1>Parkhäuser</h1>
-
-<RadzenButton Icon="add_circle_outline" style="margin-bottom: 10px" Text="New Parkhaus" Click=@OpenAddParkhaus/>
-<RadzenDataGrid @ref="parkhausesGrid" AllowFiltering="true" AllowPaging="true" PageSize="5" AllowSorting="true" Data="@parkhauses" TItem="Parkhaus">
-    <Columns>
-        <RadzenDataGridColumn TItem="Parkhaus" Property="Id" Title="Parkhaus Id" />
-        <RadzenDataGridColumn TItem="Parkhaus" Property="Name" Title="Parkhaus" />
-        <RadzenDataGridColumn TItem="Parkhaus" Context="whateaver" Filterable="false" Sortable="false" TextAlign="TextAlign.Center">
-            <Template Context="parkhaus">
-                <RadzenButton Icon="dashboard" ButtonStyle="ButtonStyle.Light" Class="m-1" Click="@(args => OpenEditParkhaus(parkhaus))" @onclick:stopPropagation="true" />
-                <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Class="m-1" Click="@(args => OpenEditParkhaus(parkhaus))" @onclick:stopPropagation="true" />
-            </Template>
-        </RadzenDataGridColumn>
-    </Columns>
-</RadzenDataGrid>
-
-
+<RadzenLayout>
+    <RadzenHeader>
+        <RadzenLabel Text="Parkhäuser" Style="margin-left: 10px" />
+    </RadzenHeader>
+    <RadzenBody>
+        <RadzenButton Icon="add_circle_outline" style="margin-bottom: 10px" Text="New Parkhaus" Click=@OpenAddParkhaus />
+        <RadzenDataGrid @ref="parkhausesGrid" AllowFiltering="true" AllowPaging="true" PageSize="5" AllowSorting="true" Data="@parkhauses" TItem="Parkhaus">
+            <Columns>
+                <RadzenDataGridColumn TItem="Parkhaus" Property="Id" Title="Parkhaus Id" />
+                <RadzenDataGridColumn TItem="Parkhaus" Property="Name" Title="Parkhaus" />
+                <RadzenDataGridColumn TItem="Parkhaus" Context="whateaver" Filterable="false" Sortable="false" TextAlign="TextAlign.Center">
+                    <Template Context="parkhaus">
+                        <RadzenButton Icon="dashboard" ButtonStyle="ButtonStyle.Light" Class="m-1" Click="@(args => OpenEditParkhaus(parkhaus))" @onclick:stopPropagation="true" />
+                        <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Class="m-1" Click="@(args => OpenEditParkhaus(parkhaus))" @onclick:stopPropagation="true" />
+                    </Template>
+                </RadzenDataGridColumn>
+            </Columns>
+        </RadzenDataGrid>
+    </RadzenBody>
+</RadzenLayout>
 
 @code {
     RadzenDataGrid<Parkhaus>? parkhausesGrid;
@@ -50,7 +53,7 @@
 
     async Task OpenEditParkhaus(Parkhaus parkhaus)
     {
-        await DialogService.OpenAsync<DetailParkhausView>($"Parkhaus {parkhaus.Name} bearbeiten", 
+        await DialogService.OpenAsync<DetailParkhausView>($"Parkhaus {parkhaus.Name} bearbeiten",
             new Dictionary<string, object>() { { "Parkhaus", parkhaus } },
             new DialogOptions() { Width = "70%", Height = "70%", Resizable = true, Draggable = true });
     }

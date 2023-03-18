@@ -1,72 +1,82 @@
-﻿@page "/mieters"
+﻿@page "/mieters/{ActiveParkhausId}"
 
 @inject HttpClient http
+@inject NavigationManager NavManager
 
 <PageTitle>Mieter</PageTitle>
 
-<h1>Mieter</h1>
-
-<RadzenButton Icon="add_circle_outline" style="margin-bottom: 10px" Text="New Mieter" Click="@InsertRow" Disabled=@(mieterToInsert != null) />
-<RadzenDataGrid @ref="mietersGrid" AllowFiltering="true" AllowPaging="true" PageSize="5" AllowSorting="true" EditMode="DataGridEditMode.Single"
-                Data="@mieters" TItem="Mieter" RowUpdate="@OnUpdateRow" RowCreate="@OnCreateRow">
-    <Columns>
-        <RadzenDataGridColumn TItem="Mieter" Property="MieterId" Title="Mieter Id" />
-        <RadzenDataGridColumn TItem="Mieter" Property="Name" Title="Mieter">
-            <EditTemplate Context="mieter">
-                <RadzenTextBox @bind-Value="mieter.Name" Style="width:100%; display: block" Name="Name" />
-            </EditTemplate>
-        </RadzenDataGridColumn>
-        <RadzenDataGridColumn TItem="Mieter" Property="MieterCode" Title="Code" />
-        <RadzenDataGridColumn TItem="Mieter" Property="Parkhaus.Name" Title="Parkhaus">
-            <EditTemplate Context="mieter">
-                <RadzenDropDown @bind-Value="mieter.Parkhaus" Data="@parkhauses" TextProperty="Name" Style="width:100%; display: block;">
-                    <Template>
-                        @context.Name
+<RadzenLayout>
+    <RadzenHeader>
+        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0">
+            <RadzenSidebarToggle Click="@(() => sidebar1Expanded = !sidebar1Expanded)" />
+            <RadzenLabel Text="Mieter" />
+        </RadzenStack>
+    </RadzenHeader>
+    <RadzenSidebar @bind-Expanded="@sidebar1Expanded">
+        <RadzenPanelMenu>
+            <RadzenPanelMenuItem Text="Parkplätze" Icon="home" Path=@String.Format("parkplaetze/{0}", ActiveParkhausId)/>
+            <RadzenPanelMenuItem Text="Mieter" Icon="account_box" Path=@String.Format("mieters/{0}", ActiveParkhausId) />
+            <RadzenPanelMenuItem Text="Umsatz" Icon="account_balance" Path=@String.Format("umsatz/{0}", ActiveParkhausId) />
+            <RadzenPanelMenuItem Text="Parkhäuser" Icon="list" Path="/" />
+        </RadzenPanelMenu>
+    </RadzenSidebar>
+    <RadzenBody>
+        <RadzenButton Icon="add_circle_outline" style="margin-bottom: 10px" Text="New Mieter" Click="@InsertRow" Disabled=@(mieterToInsert != null) />
+        <RadzenDataGrid @ref="mietersGrid" AllowFiltering="true" AllowPaging="true" PageSize="5" AllowSorting="true" EditMode="DataGridEditMode.Single"
+                        Data="@mieters" TItem="Mieter" RowUpdate="@OnUpdateRow" RowCreate="@OnCreateRow">
+            <Columns>
+                <RadzenDataGridColumn TItem="Mieter" Property="MieterId" Title="Mieter Id" />
+                <RadzenDataGridColumn TItem="Mieter" Property="Name" Title="Mieter">
+                    <EditTemplate Context="mieter">
+                        <RadzenTextBox @bind-Value="mieter.Name" Style="width:100%; display: block" Name="Name" />
+                    </EditTemplate>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="Mieter" Property="MieterCode" Title="Code" />
+                <RadzenDataGridColumn TItem="Mieter" Property="Parkhaus.Name" Title="Parkhaus">
+                    <EditTemplate Context="mieter">
+                        <RadzenDropDown @bind-Value="mieter.Parkhaus" Data="@parkhauses" TextProperty="Name" Style="width:100%; display: block;">
+                            <Template>
+                                @context.Name
+                            </Template>
+                        </RadzenDropDown>
+                    </EditTemplate>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="Mieter" Property="StartDate" Title="Start Date" Width="200px">
+                    <Template Context="mieter">
+                        @String.Format("{0:d}", mieter.StartDate)
                     </Template>
-                </RadzenDropDown>
-            </EditTemplate>
-        </RadzenDataGridColumn>
-        <RadzenDataGridColumn TItem="Mieter" Property="StartDate" Title="Start Date" Width="200px">
-            <Template Context="mieter">
-                @String.Format("{0:d}", mieter.StartDate)
-            </Template>
-            <EditTemplate Context="mieter">
-                <RadzenDatePicker @bind-Value="mieter.StartDate" Style="width:100%" />
-            </EditTemplate>
-        </RadzenDataGridColumn>
-        <RadzenDataGridColumn TItem="Mieter" Property="EndDate" Title="End Date" Width="200px">
-            <Template Context="mieter">
-                @String.Format("{0:d}", mieter.EndDate)
-            </Template>
-            <EditTemplate Context="mieter">
-                <RadzenDatePicker @bind-Value="mieter.EndDate" Style="width:100%" />
-            </EditTemplate>
-        </RadzenDataGridColumn>
-        <RadzenDataGridColumn TItem="Mieter" Context="whateaver" Filterable="false" Sortable="false" TextAlign="TextAlign.Center">
-            <Template Context="mieter">
-                <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Class="m-1" Click="@(args => EditRow(mieter))" @onclick:stopPropagation="true">
-                </RadzenButton>
-            </Template>
-            <EditTemplate Context="mieter">
-                <RadzenButton Icon="save" Size="ButtonSize.Small" Click="@((args) => SaveRow(mieter))" />
-                <RadzenButton Icon="cancel" Size="ButtonSize.Small" ButtonStyle="ButtonStyle.Secondary" Click="@((args) => CancelEdit(mieter))" />
-            </EditTemplate>
-        </RadzenDataGridColumn>
-        @*        <RadzenDataGridColumn TItem="Mieter" Context="mieter" Filterable="false" Sortable="false" TextAlign="TextAlign.Center" Width="80px">
-        <Template Context="mieter">one
-        <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Size="ButtonSize.Small" Class="m-2" Click="@(args => DeleteRow(mieter))" @onclick:stopPropagation="true">
-        </RadzenButton>
-        </Template>
-        <EditTemplate Context="mieter">
-        <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Size="ButtonSize.Small" Class="m-2" Click="@(args => DeleteRow(mieter))">
-        </RadzenButton>
-        </EditTemplate>
-        </RadzenDataGridColumn>*@
-    </Columns>
-</RadzenDataGrid>
+                    <EditTemplate Context="mieter">
+                        <RadzenDatePicker @bind-Value="mieter.StartDate" Style="width:100%" />
+                    </EditTemplate>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="Mieter" Property="EndDate" Title="End Date" Width="200px">
+                    <Template Context="mieter">
+                        @String.Format("{0:d}", mieter.EndDate)
+                    </Template>
+                    <EditTemplate Context="mieter">
+                        <RadzenDatePicker @bind-Value="mieter.EndDate" Style="width:100%" />
+                    </EditTemplate>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="Mieter" Context="whateaver" Filterable="false" Sortable="false" TextAlign="TextAlign.Center">
+                    <Template Context="mieter">
+                        <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Class="m-1" Click="@(args => EditRow(mieter))" @onclick:stopPropagation="true">
+                        </RadzenButton>
+                    </Template>
+                    <EditTemplate Context="mieter">
+                        <RadzenButton Icon="save" Size="ButtonSize.Small" Click="@((args) => SaveRow(mieter))" />
+                        <RadzenButton Icon="cancel" Size="ButtonSize.Small" ButtonStyle="ButtonStyle.Secondary" Click="@((args) => CancelEdit(mieter))" />
+                    </EditTemplate>
+                </RadzenDataGridColumn>
+            </Columns>
+        </RadzenDataGrid>
+    </RadzenBody>
+</RadzenLayout>
 
 
 @code {
+    [Parameter] public string ActiveParkhausId { get; set; }
+
+    bool sidebar1Expanded = true;
     RadzenDataGrid<Mieter>? mietersGrid;
     IEnumerable<Mieter> mieters = new List<Mieter>();
     IEnumerable<Parkhaus> parkhauses = new List<Parkhaus>();
@@ -75,9 +85,9 @@
     {
         base.OnInitialized();
 
-        mieters = (await http.GetFromJsonAsync<Mieter[]>("mieter"))?.ToList() ?? new List<Mieter>();
+        mieters = (await http.GetFromJsonAsync<Mieter[]>($"mieter/GetByParkhausId/{ActiveParkhausId}"))?.ToList() ?? new List<Mieter>();
         parkhauses = (await http.GetFromJsonAsync<Parkhaus[]>("parkhaus"))?.ToList() ?? new List<Parkhaus>();
-     
+
         StateHasChanged();
     }
     async Task EditRow(Mieter mieter)

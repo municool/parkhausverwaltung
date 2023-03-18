@@ -62,3 +62,24 @@ a, .btn-link {
     .blazor-error-boundary::after {
         content: "An error has occurred."
     }
+
+.parkplatz{
+    width: 20px;
+    height: 20px;
+    border: 2px solid;
+    float: left;
+    text-align: center;
+    margin: 5px;
+}
+
+.Free{
+    background-color: none;
+}
+
+.Visitor{
+    background-color: lightskyblue;
+}
+
+.Customer{
+    background-color: lightcoral;
+}

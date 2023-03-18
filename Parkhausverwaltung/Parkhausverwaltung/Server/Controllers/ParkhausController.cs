@@ -38,7 +38,7 @@ namespace Parkhausverwaltung.Server.Controllers
             }
         }
 
-        [HttpGet("{parkhouseId}")]
+        [HttpGet("GetParkingSlots/{parkhouseId}")]
         public IEnumerable<KeyValuePair<int, SlotState>> GetParkingSlots(int parkhouseId)
         {
             return GetParkingSlotsByParkhausId(parkhouseId);
@@ -75,7 +75,7 @@ namespace Parkhausverwaltung.Server.Controllers
             return Ok();
         }
 
-        [HttpPost("{parkhausId}")]
+        [HttpPost("GetParkticket/{parkhausId}")]
         public ActionResult<string> GetParkticket(int parkhausId)
         {
             try
@@ -105,7 +105,7 @@ namespace Parkhausverwaltung.Server.Controllers
             }
         }
 
-        [HttpPost("{parkhausId}")]
+        [HttpPost("ParkLogin/{parkhausId}")]
         public ActionResult ParkLogin(int parkhausId, [FromBody] int mieterCode)
         {
             try
@@ -140,7 +140,7 @@ namespace Parkhausverwaltung.Server.Controllers
             }
         }
 
-        [HttpPost("{parkhausId}")]
+        [HttpPost("ParkLogout/{parkhausId}")]
         public ActionResult ParkLogout(int parkhausId, [FromBody] (string code, bool isMieter) body)
         {
             using (var context = _dbContextFactory.CreateDbContext())

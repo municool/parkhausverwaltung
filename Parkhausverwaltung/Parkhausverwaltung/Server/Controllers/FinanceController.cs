@@ -115,7 +115,7 @@ namespace Parkhausverwaltung.Server.Controllers
 
         private Tarif GetNextTarifChange(List<Tarif> tarifs, TimeSpan currentMoment)
         {
-            var currentTarif = tarifs.FirstOrDefault(t => t.StartTime < currentMoment && t.EndTime > currentMoment);
+            var currentTarif = tarifs.FirstOrDefault(t => t.StartTime.TimeOfDay < currentMoment && t.EndTime.TimeOfDay > currentMoment);
 
             TimeSpan checkTime;
             if(currentTarif == null)
@@ -123,10 +123,10 @@ namespace Parkhausverwaltung.Server.Controllers
                 checkTime = currentMoment;
             }
             {
-                checkTime = currentTarif.EndTime;
+                checkTime = currentTarif.EndTime.TimeOfDay;
             }
 
-            var nextTarif = tarifs.OrderBy(t => t.StartTime).FirstOrDefault(t => t.StartTime > checkTime);
+            var nextTarif = tarifs.OrderBy(t => t.StartTime).FirstOrDefault(t => t.StartTime.TimeOfDay > checkTime);
 
             if(nextTarif == null)
             {
@@ -145,8 +145,8 @@ namespace Parkhausverwaltung.Server.Controllers
             {
                 TimeSpan timeSpent;
 
-                var nextTarifChange = GetNextTarifChange(parkhaus.Tarifs.ToList(), currentMoment).StartTime;
-                var currentTarifPrice = parkhaus.Tarifs.FirstOrDefault(t => t.StartTime < currentMoment && t.EndTime > currentMoment)?.Preis;
+                var nextTarifChange = GetNextTarifChange(parkhaus.Tarifs.ToList(), currentMoment).StartTime.TimeOfDay;
+                var currentTarifPrice = parkhaus.Tarifs.FirstOrDefault(t => t.StartTime.TimeOfDay < currentMoment && t.EndTime.TimeOfDay > currentMoment)?.Preis;
 
                 if (nextTarifChange > end.TimeOfDay)
                 {

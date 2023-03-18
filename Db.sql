@@ -61,8 +61,8 @@ CREATE TABLE Tarif
     TarifId INT IDENTITY(10000,1) NOT NULL PRIMARY KEY, -- primary key column
     ParkhausId INT NOT NULL FOREIGN KEY REFERENCES Parkhaus(ParkhausId),
     Preis DECIMAL(10, 1) NOT NULL,
-    StartTime TIME NOT NULL,
-    EndTime TIME NOT NULL,
+    StartTime DATETIME NOT NULL,
+    EndTime DATETIME NOT NULL,
     StartDate DATETIME NOT NULL,
     EndDate DATETIME,
     WorkDay BIT NOT NULL

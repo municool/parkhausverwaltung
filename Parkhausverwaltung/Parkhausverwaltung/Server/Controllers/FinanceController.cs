@@ -7,7 +7,7 @@ using Parkhausverwaltung.Shared.Models;
 namespace Parkhausverwaltung.Server.Controllers
 {
     [ApiController]
-    [Route("finance")]
+    [Route("[controller]")]
     public class FinanceController : ControllerBase
     {
         public FinanceController(IDbContextFactory<ParkhausverwaltungContext> dbContextFactory)
@@ -58,7 +58,7 @@ namespace Parkhausverwaltung.Server.Controllers
             return Ok(visit);
         }
 
-        [HttpGet]
+        [HttpGet("GetRevenueSummary/{parkhausId}")]
         public ActionResult<List<RevenueSummary>> GetRevenueSummery(int parkhausId, DateTime start, DateTime end)
         {
             Parkhaus? parkhaus;

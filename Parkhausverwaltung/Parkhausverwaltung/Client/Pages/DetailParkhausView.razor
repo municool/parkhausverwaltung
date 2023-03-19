@@ -84,7 +84,7 @@
                         <RadzenNumeric TValue="decimal" @bind-Value="tarif.Preis" Style="width:100%; display: block" Name="Preis" />
                     </EditTemplate>
                 </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="Tarif" Property="StartTime" Title="Start Zeit" Width="200px">
+                <RadzenDataGridColumn TItem="Tarif" Property="StartTime" Title="Start Zeit" Width="100px">
                     <Template Context="tarif">
                         @String.Format("{0:HH\\:mm}", tarif.StartTime)
                     </Template>
@@ -92,7 +92,7 @@
                         <RadzenDatePicker @bind-Value="tarif.StartTime" ShowTime="true" TimeOnly="true" DateFormat="HH:mm" Style="width:100%" />
                     </EditTemplate>
                 </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="Tarif" Property="EndTime" Title="End Zeit" Width="200px">
+                <RadzenDataGridColumn TItem="Tarif" Property="EndTime" Title="End Zeit" Width="100px">
                     <Template Context="tarif">
                         @String.Format("{0:HH\\:mm}", tarif.EndTime)
                     </Template>

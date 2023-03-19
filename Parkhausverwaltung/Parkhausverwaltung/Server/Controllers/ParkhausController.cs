@@ -75,7 +75,7 @@ namespace Parkhausverwaltung.Server.Controllers
             return Ok();
         }
 
-        [HttpPost("GetParkticket/{parkhausId}")]
+        [HttpGet("GetParkticket/{parkhausId}")]
         public ActionResult<string> GetParkticket(int parkhausId)
         {
             try

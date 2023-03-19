@@ -1,0 +1,97 @@
+﻿@page "/einfahrt"
+
+@inject HttpClient http
+@inject DialogService DialogService
+
+<PageTitle>Einfahrt</PageTitle>
+
+<RadzenHeader>
+    <h2 style="text-align:center;">Einfahrt</h2>
+</RadzenHeader>
+<div class="container-fluid" style="margin-top: 60px; width:70%; text-align:center;">
+    <div class="row">
+        <RadzenDropDown @bind-Value="activeParkhaus" Data="@parkhauses" TextProperty="Name" ValueProperty="Name" Style="display: block; ">
+            <Template>
+                @context.Name
+            </Template>
+        </RadzenDropDown>
+    </div>
+    <div class="row" style="padding-top:10px; text-align:center;">
+        <RadzenCard>
+            <div class="row">
+                <RadzenButton Text="Ticket lösen" Click=@(args => ClickTicketButton()) Style="width:50%; height:100px; left:50%; transform: translate(-50%,0);" />
+            </div>
+            <div class="row" style="padding-top:10px; text-align:center;">
+                Ticketnummer: @generatedTicketNr
+            </div>
+        </RadzenCard>
+    </div>
+    <div class="row">
+        <div class="col-md-8">
+            <RadzenTextBox @bind-Value="mieterCode" style="width: 100%;" Name="MieterCode" />
+        </div>
+        <div class="col-md-4 align-items-center d-flex">
+            <RadzenButton Text="Mietereinfahrt" Click=@(args => ClickParkLogin()) />
+        </div>
+        <div>
+            <RadzenText>@mieterMeldung</RadzenText>
+        </div>
+    </div>
+</div>
+
+@code {
+    Parkhaus? activeParkhaus;
+    string generatedTicketNr = "";
+    IEnumerable<Parkhaus> parkhauses = new List<Parkhaus>();
+    string mieterCode = string.Empty;
+    string mieterMeldung = string.Empty;
+
+    protected override async void OnInitialized()
+    {
+        base.OnInitialized();
+
+        parkhauses = (await http.GetFromJsonAsync<Parkhaus[]>("parkhaus"))?.ToList() ?? new List<Parkhaus>();
+        activeParkhaus = parkhauses?.FirstOrDefault();
+        StateHasChanged();
+    }
+
+    async void ClickTicketButton()
+    {
+        if (activeParkhaus == null)
+        {
+            return;
+        }
+
+        generatedTicketNr = (await http.GetStringAsync($"parkhaus/GetParkticket/{activeParkhaus.ParkhausId}"));
+        StateHasChanged();
+    }
+
+    async void ClickParkLogin()
+    {
+        if (mieterCode == string.Empty)
+        {
+            mieterMeldung = "Bitte Code eingeben!";
+            StateHasChanged();
+            return;
+        }
+
+        var response = (await http.PostAsJsonAsync($"parkhaus/ParkLogin/{activeParkhaus.ParkhausId}", mieterCode));
+
+        if (response.IsSuccessStatusCode)
+        {
+            mieterMeldung = "Gute Fahrt!";
+            mieterCode = string.Empty;
+            StateHasChanged();
+            return;
+        }
+
+        if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+        {
+            mieterMeldung = "Kein Mieter mit diesem Code!";
+            StateHasChanged();
+            return;
+        }
+
+
+    }
+}

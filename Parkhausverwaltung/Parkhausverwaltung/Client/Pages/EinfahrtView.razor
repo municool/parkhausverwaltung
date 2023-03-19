@@ -22,26 +22,31 @@
                 <RadzenButton Text="Ticket lösen" Click=@(args => ClickTicketButton()) Style="width:50%; height:100px; left:50%; transform: translate(-50%,0);" />
             </div>
             <div class="row" style="padding-top:10px; text-align:center;">
-                Ticketnummer: @generatedTicketNr
+                Ticketnummer: @visit.TicketNr
+            </div>
+            <div class="row" style="padding-top:10px; text-align:center;">
+                Parkplatz Nr: @visit.SlotNr
             </div>
         </RadzenCard>
     </div>
     <div class="row">
-        <div class="col-md-8">
-            <RadzenTextBox @bind-Value="mieterCode" style="width: 100%;" Name="MieterCode" />
-        </div>
-        <div class="col-md-4 align-items-center d-flex">
-            <RadzenButton Text="Mietereinfahrt" Click=@(args => ClickParkLogin()) />
-        </div>
-        <div>
-            <RadzenText>@mieterMeldung</RadzenText>
-        </div>
+        <RadzenCard Style="margin-top:10px;">
+            <div class="col-md">
+                <RadzenTextBox @bind-Value="mieterCode" style="width: 100%;" Name="MieterCode" />
+            </div>
+            <div class="col-md align-items-center d-flex">
+                <RadzenButton Text="Mietereinfahrt" Click=@(args => ClickParkLogin()) />
+            </div>
+            <div>
+                <RadzenText>@mieterMeldung</RadzenText>
+            </div>
+        </RadzenCard>
     </div>
 </div>
 
 @code {
     Parkhaus? activeParkhaus;
-    string generatedTicketNr = "";
+    Visit visit = new Visit();
     IEnumerable<Parkhaus> parkhauses = new List<Parkhaus>();
     string mieterCode = string.Empty;
     string mieterMeldung = string.Empty;
@@ -62,13 +67,13 @@
             return;
         }
 
-        generatedTicketNr = (await http.GetStringAsync($"parkhaus/GetParkticket/{activeParkhaus.ParkhausId}"));
+        visit = (await http.GetFromJsonAsync<Visit>($"parkhaus/GetParkticket/{activeParkhaus.ParkhausId}"));
         StateHasChanged();
     }
 
     async void ClickParkLogin()
     {
-        if (mieterCode == string.Empty)
+        if (string.IsNullOrEmpty(mieterCode))
         {
             mieterMeldung = "Bitte Code eingeben!";
             StateHasChanged();

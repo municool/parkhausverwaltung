@@ -76,7 +76,7 @@ namespace Parkhausverwaltung.Server.Controllers
         }
 
         [HttpGet("GetParkticket/{parkhausId}")]
-        public ActionResult<string> GetParkticket(int parkhausId)
+        public ActionResult<Visit> GetParkticket(int parkhausId)
         {
             try
             {
@@ -106,7 +106,7 @@ namespace Parkhausverwaltung.Server.Controllers
         }
 
         [HttpPost("ParkLogin/{parkhausId}")]
-        public ActionResult ParkLogin(int parkhausId, [FromBody] int mieterCode)
+        public ActionResult<Visit> ParkLogin(int parkhausId, [FromBody] int mieterCode)
         {
             try
             {

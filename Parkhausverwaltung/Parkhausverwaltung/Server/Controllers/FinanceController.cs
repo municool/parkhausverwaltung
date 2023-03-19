@@ -15,7 +15,7 @@ namespace Parkhausverwaltung.Server.Controllers
             _dbContextFactory = dbContextFactory;
         }
 
-        [HttpGet]
+        [HttpGet("PayTicket")]
         public ActionResult<Visit> PayParkTicket(int parkhausId, string ticketNr)
         {
             Parkhaus? parkhaus;

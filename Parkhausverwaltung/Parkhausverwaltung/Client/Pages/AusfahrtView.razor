@@ -7,90 +7,87 @@
 <RadzenHeader>
     <h2 style="text-align:center;">Ausfahrt</h2>
 </RadzenHeader>
-<div class="container-fluid" style="margin-top: 60px; width:70%; text-align:center;">
-    <div class="row">
-        <RadzenDropDown @bind-Value="activeParkhaus" Data="@parkhauses" TextProperty="Name" ValueProperty="Name" Style="display: block; ">
-            <Template>
-                @context.Name
-            </Template>
-        </RadzenDropDown>
-    </div>
-    <div class="row" style="padding-top:10px; text-align:center;">
-        <RadzenCard>
-            @if (!hasPayed)
-            {
-                <div class="row">
-                    <div class="col-md-4 align-items-center d-flex">
-                        <RadzenLabel Text="Ticketnummer: " />
+<RadzenBody>
+
+    <div class="container-fluid" style="margin-top: 60px; width:70%; text-align:center;">
+        <div class="row">
+            <RadzenDropDown @bind-Value="activeParkhaus" Data="@parkhauses" Style="display: block; ">
+                <Template>
+                    @context.Name
+                </Template>
+            </RadzenDropDown>
+        </div>
+        <div class="row" style="padding-top:10px; text-align:center;">
+            <RadzenCard>
+                @if (!hasPayed)
+                {
+                    <div class="row">
+                        <div class="col-md-4 align-items-center d-flex">
+                            <RadzenLabel Text="Ticketnummer: " />
+                        </div>
+                        <div class="col-md-8">
+                            <RadzenTextBox @bind-Value="ticketNr" style="width: 100%;" Name="Ticketnummer" />
+                        </div>
+                        <RadzenButton Text="Bezahlen" style="margin-top:5px;" Click=@(args => ClickTicketButton()) />
                     </div>
-                    <div class="col-md-8">
-                        <RadzenTextBox @bind-Value="ticketNr" style="width: 100%;" Name="Ticketnummer" />
+                }
+                else
+                {
+                    <div class="row">
+                        <div class="col-md-4 align-items-center d-flex">
+                            <RadzenLabel Text="Ticket Nr: " />
+                        </div>
+                        <div class="col-md-8">
+                            @customerVisit.TicketNr
+                        </div>
                     </div>
-                    <RadzenButton Text="Bezahlen" style="margin-top:5px;" Click=@(args => ClickTicketButton()) />
-                </div>
-            }
-            else
-            {
-                <div class="row">
-                    <div class="col-md-4 align-items-center d-flex">
-                        <RadzenLabel Text="Ticket Nr: " />
+                    <div class="row">
+                        <div class="col-md-4 align-items-center d-flex">
+                            <RadzenLabel Text="Besuchkosten: " />
+                        </div>
+                        <div class="col-md-8">
+                            @customerVisit.Cost.ToString()
+                        </div>
                     </div>
-                    <div class="col-md-8">
-                        @customerVisit.TicketNr
+                    <div class="row">
+                        <div class="col-md-4 align-items-center d-flex">
+                            <RadzenLabel Text="Ankunft: " />
+                        </div>
+                        <div class="col-md-8">
+                            @customerVisit.Arrival.ToString("dd.MM.yyyy HH:mm")
+                        </div>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-4 align-items-center d-flex">
-                        <RadzenLabel Text="Besuchkosten: " />
+                    <div class="row">
+                        <div class="col-md-4 align-items-center d-flex">
+                            <RadzenLabel Text="Abreise: " />
+                        </div>
+                        <div class="col-md-8">
+                            @customerVisit.Departure?.ToString("dd.MM.yyyy HH:mm")
+                        </div>
                     </div>
-                    <div class="col-md-8">
-                        @customerVisit.Cost.ToString()
+                    <div class="row">
+                        <RadzenButton Text="Ausfahren" Click=@(args => ClickParkLogut(customerVisit.TicketNr)) Style="width:50%; height:100px; left:50%; transform: translate(-50%,0);" />
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-4 align-items-center d-flex">
-                        <RadzenLabel Text="Ankunft: " />
-                    </div>
-                    <div class="col-md-8">
-                        @customerVisit.Arrival.ToString("dd.MM.yyyy HH:mm")
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-4 align-items-center d-flex">
-                        <RadzenLabel Text="Abreise: " />
-                    </div>
-                    <div class="col-md-8">
-                        @customerVisit.Departure?.ToString("dd.MM.yyyy HH:mm")
-                    </div>
-                </div>
-                <div class="row" style="margin-bottom:10px;">
-                    <div class="col-md-4 align-items-center d-flex">
-                        <RadzenLabel Text="Cost: " />
-                    </div>
-                    <div class="col-md-8">
-                        @customerVisit.Cost.ToString()
-                    </div>
-                </div>
-                <div class="row">
-                    <RadzenButton Text="Ausfahren" Click=@(args => ClickParkLogut(customerVisit.TicketNr)) Style="width:50%; height:100px; left:50%; transform: translate(-50%,0);" />
-                </div>
-            }
+                }
             </RadzenCard>
-    </div>
-    <div class="row">
-        <RadzenCard Style="margin-top:10px;">
-            <div class="col-md-8">
-                <RadzenTextBox @bind-Value="mieterCode" style="width: 100%;" Name="MieterCode" />
-            </div>
-            <div class="col-md-2 align-items-center d-flex">
-                <RadzenButton Text="Mieterausfahrt" Click=@(args => ClickParkLogut(mieterCode)) />
-            </div>
+        </div>
+        <div class="row">
+            <RadzenCard Style="margin-top:10px;">
+                <div class="col-md-8">
+                    <RadzenTextBox @bind-Value="mieterCode" style="width: 100%;" Name="MieterCode" />
+                </div>
+                <div class="col-md-2 align-items-center d-flex">
+                    <RadzenButton Text="Mieterausfahrt" Click=@(args => ClickParkLogut(mieterCode)) />
+                </div>
+            </RadzenCard>
+        </div>
+        <div class="row">
             <div>
-                <RadzenText>@mieterMeldung</RadzenText>
+                <RadzenText TextStyle="TextStyle.H3">@mieterMeldung</RadzenText>
             </div>
-        </RadzenCard>
+        </div>
     </div>
-</div>
+</RadzenBody>
 
 @code {
     bool hasPayed = false;
@@ -118,6 +115,12 @@
         }
 
         customerVisit = (await http.GetFromJsonAsync<Visit>($"finance/PayTicket?parkhausId={activeParkhaus.ParkhausId}&ticketNr={ticketNr}"));
+
+        if (customerVisit?.Cost != null && customerVisit.Cost > 0)
+        {
+            hasPayed = true;
+        }
+
         StateHasChanged();
     }
 
@@ -130,12 +133,14 @@
             return;
         }
 
-        var response = (await http.PostAsJsonAsync($"parkhaus/ParkLogout/{activeParkhaus.ParkhausId}", code));
+        var response = (await http.PostAsJsonAsync($"parkhaus/ParkLogout/{activeParkhaus.ParkhausId}", new KeyValuePair<string, bool>(code, !string.IsNullOrEmpty(mieterCode))));
 
         if (response.IsSuccessStatusCode)
         {
             mieterMeldung = "Gute Fahrt!";
             mieterCode = string.Empty;
+            hasPayed = false;
+            ticketNr = string.Empty;
             StateHasChanged();
             return;
         }
@@ -148,7 +153,7 @@
         }
         else
         {
-            mieterMeldung = "Nicht bezahlt!";
+            mieterMeldung = "Ein Fehler ist aufgetreten!";
             StateHasChanged();
             return;
         }

@@ -14,7 +14,7 @@
     </RadzenHeader>
     <RadzenSidebar @bind-Expanded="@sidebar1Expanded">
         <RadzenPanelMenu>
-            <RadzenPanelMenuItem Text="Parkplätze" Icon="home" Path=@String.Format("parkplaetze/{0}", ActiveParkhausId)/>
+            <RadzenPanelMenuItem Text="Parkplätze" Icon="home" Path=@String.Format("parkplaetze/{0}", ActiveParkhausId) />
             <RadzenPanelMenuItem Text="Mieter" Icon="account_box" Path=@String.Format("mieters/{0}", ActiveParkhausId) />
             <RadzenPanelMenuItem Text="Umsatz" Icon="account_balance" Path=@String.Format("umsatz/{0}", ActiveParkhausId) />
             <RadzenPanelMenuItem Text="Parkhäuser" Icon="list" Path="/" />
@@ -32,7 +32,12 @@
                     </EditTemplate>
                 </RadzenDataGridColumn>
                 <RadzenDataGridColumn TItem="Mieter" Property="MieterCode" Title="Code" />
-                <RadzenDataGridColumn TItem="Mieter" Property="Parkhaus.Name" Title="Parkhaus">
+                <RadzenDataGridColumn TItem="Mieter" Property="SlotNr" Title="Parkplatznummer">
+                    <EditTemplate Context="mieter">
+                        <RadzenNumeric @bind-Value="mieter.SlotNr" Style="width:100%" />
+                    </EditTemplate>
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="Mieter" Property="ParkhausId" Title="Parkhaus Id">
                     <EditTemplate Context="mieter">
                         <RadzenDropDown @bind-Value="mieter.Parkhaus" Data="@parkhauses" TextProperty="Name" Style="width:100%; display: block;">
                             <Template>

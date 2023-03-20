@@ -8,44 +8,46 @@
 <RadzenHeader>
     <h2 style="text-align:center;">Einfahrt</h2>
 </RadzenHeader>
-<div class="container-fluid" style="margin-top: 60px; width:70%; text-align:center;">
-    <div class="row">
-        <RadzenDropDown @bind-Value="activeParkhaus" Data="@parkhauses" TextProperty="Name" ValueProperty="Name" Style="display: block; ">
-            <Template>
-                @context.Name
-            </Template>
-        </RadzenDropDown>
+<RadzenBody>
+    <div class="container-fluid" style="margin-top: 60px; width:70%; text-align:center;">
+        <div class="row">
+            <RadzenDropDown @bind-Value="activeParkhaus" Data="@parkhauses" Style="display: block; ">
+                <Template>
+                    @context.Name
+                </Template>
+            </RadzenDropDown>
+        </div>
+        <div class="row" style="padding-top:10px; text-align:center;">
+            <RadzenCard>
+                <div class="row">
+                    <RadzenButton Text="Ticket lösen" Click=@(args => ClickTicketButton()) Style="width:50%; height:100px; left:50%; transform: translate(-50%,0);" />
+                </div>
+                <div class="row" style="padding-top:10px; text-align:center;">
+                    Ticketnummer: @visit.TicketNr
+                </div>
+                <div class="row" style="padding-top:10px; text-align:center;">
+                    Parkplatz Nr: @visit.SlotNr
+                </div>
+            </RadzenCard>
+        </div>
+        <div class="row">
+            <RadzenCard Style="margin-top:10px;">
+                <div class="col-md">
+                    <RadzenTextBox @bind-Value="mieterCode" style="width: 100%;" Name="MieterCode" />
+                </div>
+                <div class="col-md align-items-center d-flex">
+                    <RadzenButton Text="Mietereinfahrt" Click=@(args => ClickParkLogin()) />
+                </div>
+                <div>
+                    <RadzenText>@mieterMeldung</RadzenText>
+                </div>
+            </RadzenCard>
+        </div>
     </div>
-    <div class="row" style="padding-top:10px; text-align:center;">
-        <RadzenCard>
-            <div class="row">
-                <RadzenButton Text="Ticket lösen" Click=@(args => ClickTicketButton()) Style="width:50%; height:100px; left:50%; transform: translate(-50%,0);" />
-            </div>
-            <div class="row" style="padding-top:10px; text-align:center;">
-                Ticketnummer: @visit.TicketNr
-            </div>
-            <div class="row" style="padding-top:10px; text-align:center;">
-                Parkplatz Nr: @visit.SlotNr
-            </div>
-        </RadzenCard>
-    </div>
-    <div class="row">
-        <RadzenCard Style="margin-top:10px;">
-            <div class="col-md">
-                <RadzenTextBox @bind-Value="mieterCode" style="width: 100%;" Name="MieterCode" />
-            </div>
-            <div class="col-md align-items-center d-flex">
-                <RadzenButton Text="Mietereinfahrt" Click=@(args => ClickParkLogin()) />
-            </div>
-            <div>
-                <RadzenText>@mieterMeldung</RadzenText>
-            </div>
-        </RadzenCard>
-    </div>
-</div>
+</RadzenBody>
 
 @code {
-    Parkhaus? activeParkhaus;
+    Parkhaus activeParkhaus;
     Visit visit = new Visit();
     IEnumerable<Parkhaus> parkhauses = new List<Parkhaus>();
     string mieterCode = string.Empty;

@@ -5,45 +5,43 @@
 
 <PageTitle>Parkplätze</PageTitle>
 
-<RadzenLayout>
-    <RadzenHeader>
-        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0">
-            <RadzenSidebarToggle Click="@(() => sidebar1Expanded = !sidebar1Expanded)" />
-            <RadzenLabel Text="Parplätze" />
-        </RadzenStack>
-    </RadzenHeader>
-    <RadzenSidebar @bind-Expanded="@sidebar1Expanded">
-        <RadzenPanelMenu>
-            <RadzenPanelMenuItem Text="Parkplätze" Icon="home" Path=@String.Format("parkplaetze/{0}", ActiveParkhausId) />
-            <RadzenPanelMenuItem Text="Mieter" Icon="account_box" Path=@String.Format("mieters/{0}", ActiveParkhausId) />
-            <RadzenPanelMenuItem Text="Umsatz" Icon="account_balance" Path=@String.Format("umsatz/{0}", ActiveParkhausId) />
-            <RadzenPanelMenuItem Text="Parkhäuser" Icon="list" Path="/" />
-        </RadzenPanelMenu>
-    </RadzenSidebar>
-    <RadzenBody>
-        <RadzenCard>
-            @foreach (var slot in slots)
-            {
-                <div class="parkplatz @slot.Value.ToString()">
-                    @slot.Key
-                </div>
-            }
-        </RadzenCard>
-    </RadzenBody>
-</RadzenLayout>
+<RadzenHeader>
+    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0">
+        <RadzenSidebarToggle Click="@(() => sidebar1Expanded = !sidebar1Expanded)" />
+        <RadzenLabel Text="Parplätze" />
+    </RadzenStack>
+</RadzenHeader>
+<RadzenSidebar @bind-Expanded="@sidebar1Expanded">
+    <RadzenPanelMenu>
+        <RadzenPanelMenuItem Text="Parkplätze" Icon="home" Path=@String.Format("parkplaetze/{0}", ActiveParkhausId) />
+        <RadzenPanelMenuItem Text="Mieter" Icon="account_box" Path=@String.Format("mieters/{0}", ActiveParkhausId) />
+        <RadzenPanelMenuItem Text="Umsatz" Icon="account_balance" Path=@String.Format("umsatz/{0}", ActiveParkhausId) />
+        <RadzenPanelMenuItem Text="Parkhäuser" Icon="list" Path="/" />
+    </RadzenPanelMenu>
+</RadzenSidebar>
+<RadzenBody>
+    <div class="rz-p-4">
+        @foreach (var slot in slots)
+        {
+            <div class="parkplatz @slot.Value.ToString()">
+                @slot.Key
+            </div>
+        }
+    </div>
+</RadzenBody>
 
 
 @code {
     [Parameter] public string ActiveParkhausId { get; set; }
     bool sidebar1Expanded = true;
 
-    Dictionary<int, SlotState> slots;
+    List<KeyValuePair<int, SlotState>> slots = new List<KeyValuePair<int, SlotState>>();
 
     protected override async void OnInitialized()
     {
         base.OnInitialized();
 
-        slots = (await http.GetFromJsonAsync<Dictionary<int, SlotState>>($"parkhaus/GetParkingSlots/{ActiveParkhausId}")) ?? new Dictionary<int, SlotState>();
+        slots = (await http.GetFromJsonAsync<List<KeyValuePair<int, SlotState>>>($"parkhaus/GetParkingSlots/{ActiveParkhausId}")) ?? new List<KeyValuePair<int, SlotState>>();
 
         StateHasChanged();
     }

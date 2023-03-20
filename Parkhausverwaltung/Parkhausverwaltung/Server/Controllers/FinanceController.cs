@@ -59,8 +59,11 @@ namespace Parkhausverwaltung.Server.Controllers
         }
 
         [HttpGet("GetRevenueSummary/{parkhausId}")]
-        public ActionResult<List<RevenueSummary>> GetRevenueSummery(int parkhausId, DateTime start, DateTime end)
+        public ActionResult<List<RevenueSummary>> GetRevenueSummery(int parkhausId, string startDate, string endDate)
         {
+            var start = DateTime.Parse(startDate);
+            var end = DateTime.Parse(endDate);
+
             Parkhaus? parkhaus;
             using (var context = _dbContextFactory.CreateDbContext())
             {
@@ -92,9 +95,13 @@ namespace Parkhausverwaltung.Server.Controllers
             {
                 var monthStart = currentMoment.AddDays(-1 * currentMoment.Day + 1);
                 var monthEnd = monthStart.AddMonths(1).AddSeconds(-1);
-                if(monthEnd >= end)
+                if (monthEnd >= end)
                 {
                     currentMoment = end;
+                }
+                else
+                {
+                    currentMoment = monthStart.AddMonths(1);
                 }
 
                 var monthlySummary = new RevenueSummary()
@@ -107,7 +114,7 @@ namespace Parkhausverwaltung.Server.Controllers
                     VisitorRevenue = parkhaus.Visits.Where(v => v.Arrival >= currentMoment && v.Departure <= monthEnd).Sum(v => v.Cost)
                 };
 
-                currentMoment = monthStart.AddMonths(1);
+                revenueSummaries.Add(monthlySummary);
             }
 
             return Ok(revenueSummaries);
@@ -122,13 +129,14 @@ namespace Parkhausverwaltung.Server.Controllers
             {
                 checkTime = currentMoment;
             }
+            else
             {
                 checkTime = currentTarif.EndTime.TimeOfDay;
             }
 
-            var nextTarif = tarifs.OrderBy(t => t.StartTime).FirstOrDefault(t => t.StartTime.TimeOfDay > checkTime);
+            var nextTarif = tarifs.OrderBy(t => t.StartTime).FirstOrDefault(t => t.StartTime.TimeOfDay > checkTime) ?? tarifs.OrderBy(t => t.StartTime).FirstOrDefault();
 
-            if(nextTarif == null)
+            if (nextTarif == null)
             {
                 return new Tarif();
             }
@@ -147,6 +155,11 @@ namespace Parkhausverwaltung.Server.Controllers
 
                 var nextTarifChange = GetNextTarifChange(parkhaus.Tarifs.ToList(), currentMoment).StartTime.TimeOfDay;
                 var currentTarifPrice = parkhaus.Tarifs.FirstOrDefault(t => t.StartTime.TimeOfDay < currentMoment && t.EndTime.TimeOfDay > currentMoment)?.Preis;
+
+                if(nextTarifChange < start.TimeOfDay)
+                {
+                    nextTarifChange += TimeSpan.FromDays(1);
+                }
 
                 if (nextTarifChange > end.TimeOfDay)
                 {

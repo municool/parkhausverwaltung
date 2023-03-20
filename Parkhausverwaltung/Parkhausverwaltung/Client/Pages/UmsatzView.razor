@@ -1,120 +1,119 @@
 ﻿@page "/umsatz/{ActiveParkhausId}"
+@using System.Web
 
 @inject HttpClient http
 @inject NavigationManager NavManager
 
 <PageTitle>Umsatz</PageTitle>
 
-<RadzenLayout> 
-    <RadzenHeader>
-        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0">
-            <RadzenSidebarToggle Click="@(() => sidebar1Expanded = !sidebar1Expanded)" />
-            <h2 style="text-align:center;">Umsatz berechnen</h2>
-        </RadzenStack>
-    </RadzenHeader>
-    <RadzenSidebar @bind-Expanded="@sidebar1Expanded">
-        <RadzenPanelMenu>
-            <RadzenPanelMenuItem Text="Parkplätze" Icon="home" Path=@String.Format("parkplaetze/{0}", ActiveParkhausId) />
-            <RadzenPanelMenuItem Text="Mieter" Icon="account_box" Path=@String.Format("mieters/{0}", ActiveParkhausId) />
-            <RadzenPanelMenuItem Text="Umsatz" Icon="account_balance" Path=@String.Format("umsatz/{0}", ActiveParkhausId) />
-            <RadzenPanelMenuItem Text="Parkhäuser" Icon="list" Path="/" />
-        </RadzenPanelMenu>
-    </RadzenSidebar>
-    <RadzenBody>
-        <RadzenCard Style="width:100%;">
-            <RadzenTemplateForm Data="@uRqData" Submit="@((UmsatzRequestData args) => { Submit(args); })">
-                <div class="row">
-                    <div class="col-md-4 align-items-center d-flex">
-                        <RadzenLabel Text="Start Datum" />
-                    </div>
-                    <div class="col-md-8">
-                        <RadzenDatePicker @bind-Value="@uRqData.StartDate" Name="StartDate" ShowTime="false" DateFormat="dd.MM.yyyy" Style="width:100%" />
-                    </div>
+<RadzenHeader>
+    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0">
+        <RadzenSidebarToggle Click="@(() => sidebar1Expanded = !sidebar1Expanded)" />
+        <h2 style="text-align:center;">Umsatz berechnen</h2>
+    </RadzenStack>
+</RadzenHeader>
+<RadzenSidebar @bind-Expanded="@sidebar1Expanded">
+    <RadzenPanelMenu>
+        <RadzenPanelMenuItem Text="Parkplätze" Icon="home" Path=@String.Format("parkplaetze/{0}", ActiveParkhausId) />
+        <RadzenPanelMenuItem Text="Mieter" Icon="account_box" Path=@String.Format("mieters/{0}", ActiveParkhausId) />
+        <RadzenPanelMenuItem Text="Umsatz" Icon="account_balance" Path=@String.Format("umsatz/{0}", ActiveParkhausId) />
+        <RadzenPanelMenuItem Text="Parkhäuser" Icon="list" Path="/" />
+    </RadzenPanelMenu>
+</RadzenSidebar>
+<RadzenBody>
+    <RadzenCard Style="width:100%;">
+        <RadzenTemplateForm Data="@uRqData" Submit="@((UmsatzRequestData args) => { Submit(args); })">
+            <div class="row">
+                <div class="col-md-4 align-items-center d-flex">
+                    <RadzenLabel Text="Start Datum" />
                 </div>
-                <div class="row">
-                    <div class="col-md-4 align-items-center d-flex">
-                        <RadzenLabel Text="End Datum" />
-                    </div>
-                    <div class="col-md-8">
-                        <RadzenDatePicker @bind-Value="@uRqData.EndDate" Name="EndDate" ShowTime="false" DateFormat="dd.MM.yyyy" Style="width:100%" />
-                    </div>
+                <div class="col-md-8">
+                    <RadzenDatePicker @bind-Value="@uRqData.StartDate" Name="StartDate" ShowTime="false" DateFormat="dd.MM.yyyy" Style="width:100%" />
                 </div>
-                <RadzenButton ButtonType="ButtonType.Submit" Icon="autorenew" Text="Search" />
-            </RadzenTemplateForm>
-        </RadzenCard>
-        @if (revenueCompleteSummary != null)
-        {
-            <RadzenFieldset AllowCollapse="true" Style="width:100%" Text="Gesamter Zeitraum">
-                <div class="row">
-                    <div class="col-md-4 align-items-center d-flex">
-                        <RadzenLabel Text="Besucher Umsatz: " />
-                    </div>
-                    <div class="col-md-8">
-                        @revenueCompleteSummary.VisitorRevenue.ToString()
-                    </div>
-                    <div class="col-md-4 align-items-center d-flex">
-                        <RadzenLabel Text="Besucher Anzahl: " />
-                    </div>
-                    <div class="col-md-8">
-                        @revenueCompleteSummary.VisitorCount.ToString()
-                    </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4 align-items-center d-flex">
+                    <RadzenLabel Text="End Datum" />
                 </div>
-                <div class="row">
-                    <div class="col-md-4 align-items-center d-flex">
-                        <RadzenLabel Text="Mieter Umsatz: " />
-                    </div>
-                    <div class="col-md-8">
-                        @revenueCompleteSummary.MieterRevenue.ToString()
-                    </div>
-                    <div class="col-md-4 align-items-center d-flex">
-                        <RadzenLabel Text="Mieter Anzahl: " />
-                    </div>
-                    <div class="col-md-8">
-                        @revenueCompleteSummary.MieterCount.ToString()
-                    </div>
+                <div class="col-md-8">
+                    <RadzenDatePicker @bind-Value="@uRqData.EndDate" Name="EndDate" ShowTime="false" DateFormat="dd.MM.yyyy" Style="width:100%" />
                 </div>
-            </RadzenFieldset>
-        }
-        @if (revenueMonthlySummaries != null && revenueMonthlySummaries.Count > 0)
-        {
-            <RadzenFieldset Text="Monatlicher Umsatz">
-                @foreach (var rev in revenueMonthlySummaries)
-                {
-                    <RadzenFieldset AllowCollapse="true" Style="width:100%" Text=@String.Format("{0}", rev.StartDate.Month.ToString())>
-                        <div class="row">
-                            <div class="col-md-4 align-items-center d-flex">
-                                <RadzenLabel Text="Besucher Umsatz: " />
-                            </div>
-                            <div class="col-md-8">
-                                @rev.VisitorRevenue.ToString()
-                            </div>
-                            <div class="col-md-4 align-items-center d-flex">
-                                <RadzenLabel Text="Besucher Anzahl: " />
-                            </div>
-                            <div class="col-md-8">
-                                @rev.VisitorCount.ToString()
-                            </div>
+            </div>
+            <RadzenButton ButtonType="ButtonType.Submit" Icon="autorenew" Text="Search" />
+        </RadzenTemplateForm>
+    </RadzenCard>
+    @if (revenueCompleteSummary != null)
+    {
+        <RadzenFieldset AllowCollapse="true" Style="width:100%" Text="Gesamter Zeitraum">
+            <div class="row">
+                <div class="col-md-4 align-items-center d-flex">
+                    <RadzenLabel Text="Besucher Umsatz: " />
+                </div>
+                <div class="col-md-8">
+                    @revenueCompleteSummary.VisitorRevenue.ToString()
+                </div>
+                <div class="col-md-4 align-items-center d-flex">
+                    <RadzenLabel Text="Besucher Anzahl: " />
+                </div>
+                <div class="col-md-8">
+                    @revenueCompleteSummary.VisitorCount.ToString()
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4 align-items-center d-flex">
+                    <RadzenLabel Text="Mieter Umsatz: " />
+                </div>
+                <div class="col-md-8">
+                    @revenueCompleteSummary.MieterRevenue.ToString()
+                </div>
+                <div class="col-md-4 align-items-center d-flex">
+                    <RadzenLabel Text="Mieter Anzahl: " />
+                </div>
+                <div class="col-md-8">
+                    @revenueCompleteSummary.MieterCount.ToString()
+                </div>
+            </div>
+        </RadzenFieldset>
+    }
+    @if (revenueMonthlySummaries != null && revenueMonthlySummaries.Count > 0)
+    {
+        <RadzenFieldset Text="Monatlicher Umsatz">
+            @foreach (var rev in revenueMonthlySummaries)
+            {
+                <RadzenFieldset AllowCollapse="true" Style="width:100%" Text=@String.Format("{0}", rev.StartDate.Month.ToString())>
+                    <div class="row">
+                        <div class="col-md-4 align-items-center d-flex">
+                            <RadzenLabel Text="Besucher Umsatz: " />
                         </div>
-                        <div class="row">
-                            <div class="col-md-4 align-items-center d-flex">
-                                <RadzenLabel Text="Mieter Umsatz: " />
-                            </div>
-                            <div class="col-md-8">
-                                @rev.MieterRevenue.ToString()
-                            </div>
-                            <div class="col-md-4 align-items-center d-flex">
-                                <RadzenLabel Text="Mieter Anzahl: " />
-                            </div>
-                            <div class="col-md-8">
-                                @rev.MieterCount.ToString()
-                            </div>
+                        <div class="col-md-8">
+                            @rev.VisitorRevenue.ToString()
                         </div>
-                    </RadzenFieldset>
-                }
-            </RadzenFieldset>
-        }
-    </RadzenBody>
-</RadzenLayout>
+                        <div class="col-md-4 align-items-center d-flex">
+                            <RadzenLabel Text="Besucher Anzahl: " />
+                        </div>
+                        <div class="col-md-8">
+                            @rev.VisitorCount.ToString()
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 align-items-center d-flex">
+                            <RadzenLabel Text="Mieter Umsatz: " />
+                        </div>
+                        <div class="col-md-8">
+                            @rev.MieterRevenue.ToString()
+                        </div>
+                        <div class="col-md-4 align-items-center d-flex">
+                            <RadzenLabel Text="Mieter Anzahl: " />
+                        </div>
+                        <div class="col-md-8">
+                            @rev.MieterCount.ToString()
+                        </div>
+                    </div>
+                </RadzenFieldset>
+            }
+        </RadzenFieldset>
+    }
+</RadzenBody>
 
 
 @code {
@@ -137,7 +136,10 @@
 
     async void Submit(UmsatzRequestData reqTimes)
     {
-        var revenueSummarys = (await http.GetFromJsonAsync<List<RevenueSummary>>($"finance/GetRevenueSummary/{ActiveParkhausId}?startdate={reqTimes.StartDate}&enddate={reqTimes.EndDate}")) ?? new List<RevenueSummary>();
+        var startDateString = HttpUtility.UrlEncodeUnicode(reqTimes.StartDate.ToString("d"));
+        var endDateString = HttpUtility.UrlEncodeUnicode(reqTimes.EndDate.ToString("d"));
+
+        var revenueSummarys = (await http.GetFromJsonAsync<List<RevenueSummary>>($"finance/GetRevenueSummary/{ActiveParkhausId}?startDate={startDateString}&endDate={endDateString}")) ?? new List<RevenueSummary>();
         revenueCompleteSummary = revenueSummarys.FirstOrDefault(r => r.StartDate == reqTimes.StartDate && r.EndDate == reqTimes.EndDate);
 
         if (revenueCompleteSummary != null)
@@ -146,6 +148,7 @@
         }
 
         revenueMonthlySummaries = revenueSummarys.OrderBy(r => r.StartDate).ToList();
+        StateHasChanged();
     }
 
     class UmsatzRequestData

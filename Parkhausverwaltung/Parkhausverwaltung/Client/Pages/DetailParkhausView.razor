@@ -10,7 +10,7 @@
                 <RadzenLabel Text="Id" />
             </div>
             <div class="col-md-8">
-                <RadzenTextBox style="width: 100%;" Name="ParkhausId" Disabled />
+                @parkhausToEdit.ParkhausId.ToString()
             </div>
         </div>
         <div class="row">
@@ -46,97 +46,100 @@
             </div>
         </div>
     </RadzenFieldset>
-    <RadzenFieldset Text="Stockwerke">
-        <RadzenButton Icon="add_circle_outline" style="margin-bottom: 10px" Text="Stockwerk hinzufügen" Click="@InsertFloorRow" Disabled=@(floorToInsert != null) />
-        <RadzenDataGrid @ref="floorGrid" EditMode="DataGridEditMode.Single" Data="@parkhausToEdit.Floors" TItem="Floor" RowUpdate="@OnUpdateFloorRow" RowCreate="@OnCreateFloorRow">
-            <Columns>
-                <RadzenDataGridColumn TItem="Floor" Property="FloorId" Title="Id" />
-                <RadzenDataGridColumn TItem="Floor" Property="FloorNr" Title="Stockwerk Nummer">
-                    <EditTemplate Context="floor">
-                        <RadzenNumeric TValue="int" @bind-Value="floor.FloorNr" Style="width:100%; display: block" Name="FloorNr" />
-                    </EditTemplate>
-                </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="Floor" Property="SlotCount" Title="Anzahl Parkplätze">
-                    <EditTemplate Context="floor">
-                        <RadzenNumeric TValue="int" @bind-Value="floor.SlotCount" Style="width:100%; display: block" Name="SlotCount" />
-                    </EditTemplate>
-                </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="Floor" Context="whateaver" Filterable="false" Sortable="false" TextAlign="TextAlign.Center">
-                    <Template Context="floor">
-                        <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Class="m-1" Click="@(args => EditFloorRow(floor))" @onclick:stopPropagation="true">
-                        </RadzenButton>
-                    </Template>
-                    <EditTemplate Context="floor">
-                        <RadzenButton Icon="save" Size="ButtonSize.Small" Click="@((args) => SaveFloorRow(floor))" />
-                        <RadzenButton Icon="cancel" Size="ButtonSize.Small" ButtonStyle="ButtonStyle.Secondary" Click="@((args) => CancelFloorEdit(floor))" />
-                    </EditTemplate>
-                </RadzenDataGridColumn>
-            </Columns>
-        </RadzenDataGrid>
-    </RadzenFieldset>
-    <RadzenFieldset Text="Tarife">
-        <RadzenButton Icon="add_circle_outline" style="margin-bottom: 10px" Text="Tarif hinzufügen" Click="@InsertTarifRow" Disabled=@(tarifToInsert != null) />
-        <RadzenDataGrid @ref="tarifGrid" EditMode="DataGridEditMode.Single" Data="@parkhausToEdit.Tarifs" TItem="Tarif"RowUpdate="@OnUpdateTarifRow" RowCreate="@OnCreateTarifRow">
-            <Columns>
-                <RadzenDataGridColumn TItem="Tarif" Property="TarifId" Title="Id" />
-                <RadzenDataGridColumn TItem="Tarif" Property="Preis" Title="Preis">
-                    <EditTemplate Context="tarif">
-                        <RadzenNumeric TValue="decimal" @bind-Value="tarif.Preis" Style="width:100%; display: block" Name="Preis" />
-                    </EditTemplate>
-                </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="Tarif" Property="StartTime" Title="Start Zeit" Width="100px">
-                    <Template Context="tarif">
-                        @String.Format("{0:HH\\:mm}", tarif.StartTime)
-                    </Template>
-                    <EditTemplate Context="tarif">
-                        <RadzenDatePicker @bind-Value="tarif.StartTime" ShowTime="true" TimeOnly="true" DateFormat="HH:mm" Style="width:100%" />
-                    </EditTemplate>
-                </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="Tarif" Property="EndTime" Title="End Zeit" Width="100px">
-                    <Template Context="tarif">
-                        @String.Format("{0:HH\\:mm}", tarif.EndTime)
-                    </Template>
-                    <EditTemplate Context="tarif">
-                        <RadzenDatePicker @bind-Value="tarif.EndTime" ShowTime="true" TimeOnly="true" DateFormat="HH:mm" Style="width:100%" />
-                    </EditTemplate>
-                </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="Tarif" Property="StartDate" Title="Start Datum" Width="200px">
-                    <Template Context="tarif">
-                        @String.Format("{0:d}", tarif.StartDate)
-                    </Template>
-                    <EditTemplate Context="tarif">
-                        <RadzenDatePicker @bind-Value="tarif.StartDate" DateFormat="dd.MM.yyyy" Style="width:100%" />
-                    </EditTemplate>
-                </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="Tarif" Property="EndDate" Title="End Datum" Width="200px">
-                    <Template Context="tarif">
-                        @tarif.EndDate?.ToString("dd.MM.yyyy")
-                    </Template>
-                    <EditTemplate Context="tarif">
-                        <RadzenDatePicker @bind-Value="tarif.EndDate" DateFormat="dd.MM.yyyy" Style="width:100%" />
-                    </EditTemplate>
-                </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="Tarif" Property="WorkDay" Title="Wochentag" Width="200px">
-                    <Template Context="tarif">
-                        <RadzenCheckBox @bind-Value="tarif.WorkDay" Name="WorkDay" Disabled />
-                    </Template>
-                    <EditTemplate Context="tarif">
-                        <RadzenCheckBox @bind-Value="tarif.WorkDay" Name="WorkDay" />
-                    </EditTemplate>
-                </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="Tarif" Context="whateaver" Filterable="false" Sortable="false" TextAlign="TextAlign.Center">
-                    <Template Context="tarif">
-                        <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Class="m-1" Click="@(args => EditTarifRow(tarif))" @onclick:stopPropagation="true">
-                        </RadzenButton>
-                    </Template>
-                    <EditTemplate Context="tarif">
-                        <RadzenButton Icon="save" Size="ButtonSize.Small" Click="@((args) => SaveTarifRow(tarif))" />
-                        <RadzenButton Icon="cancel" Size="ButtonSize.Small" ButtonStyle="ButtonStyle.Secondary" Click="@((args) => CancelTarifEdit(tarif))" />
-                    </EditTemplate>
-                </RadzenDataGridColumn>
-            </Columns>
-        </RadzenDataGrid>
-    </RadzenFieldset>
+    @if (parkhausToEdit.ParkhausId != null && parkhausToEdit.ParkhausId > 0)
+    {
+        <RadzenFieldset Text="Stockwerke">
+            <RadzenButton Icon="add_circle_outline" style="margin-bottom: 10px" Text="Stockwerk hinzufügen" Click="@InsertFloorRow" Disabled=@(floorToInsert != null) />
+            <RadzenDataGrid @ref="floorGrid" EditMode="DataGridEditMode.Single" Data="@floors" TItem="Floor" RowUpdate="@OnUpdateFloorRow" RowCreate="@OnCreateFloorRow">
+                <Columns>
+                    <RadzenDataGridColumn TItem="Floor" Property="FloorId" Title="Id" />
+                    <RadzenDataGridColumn TItem="Floor" Property="FloorNr" Title="Stockwerk Nummer">
+                        <EditTemplate Context="floor">
+                            <RadzenNumeric TValue="int" @bind-Value="floor.FloorNr" Style="width:100%; display: block" Name="FloorNr" />
+                        </EditTemplate>
+                    </RadzenDataGridColumn>
+                    <RadzenDataGridColumn TItem="Floor" Property="SlotCount" Title="Anzahl Parkplätze">
+                        <EditTemplate Context="floor">
+                            <RadzenNumeric TValue="int" @bind-Value="floor.SlotCount" Style="width:100%; display: block" Name="SlotCount" />
+                        </EditTemplate>
+                    </RadzenDataGridColumn>
+                    <RadzenDataGridColumn TItem="Floor" Context="whateaver" Filterable="false" Sortable="false" TextAlign="TextAlign.Center">
+                        <Template Context="floor">
+                            <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Class="m-1" Click="@(args => EditFloorRow(floor))" @onclick:stopPropagation="true">
+                            </RadzenButton>
+                        </Template>
+                        <EditTemplate Context="floor">
+                            <RadzenButton Icon="save" Size="ButtonSize.Small" Click="@((args) => SaveFloorRow(floor))" />
+                            <RadzenButton Icon="cancel" Size="ButtonSize.Small" ButtonStyle="ButtonStyle.Secondary" Click="@((args) => CancelFloorEdit(floor))" />
+                        </EditTemplate>
+                    </RadzenDataGridColumn>
+                </Columns>
+            </RadzenDataGrid>
+        </RadzenFieldset>
+        <RadzenFieldset Text="Tarife">
+            <RadzenButton Icon="add_circle_outline" style="margin-bottom: 10px" Text="Tarif hinzufügen" Click="@InsertTarifRow" Disabled=@(tarifToInsert != null) />
+            <RadzenDataGrid @ref="tarifGrid" EditMode="DataGridEditMode.Single" Data="@tarifs" TItem="Tarif" RowUpdate="@OnUpdateTarifRow" RowCreate="@OnCreateTarifRow">
+                <Columns>
+                    <RadzenDataGridColumn TItem="Tarif" Property="TarifId" Title="Id" />
+                    <RadzenDataGridColumn TItem="Tarif" Property="Preis" Title="Preis">
+                        <EditTemplate Context="tarif">
+                            <RadzenNumeric TValue="decimal" @bind-Value="tarif.Preis" Style="width:100px; display: block" Name="Preis" />
+                        </EditTemplate>
+                    </RadzenDataGridColumn>
+                    <RadzenDataGridColumn TItem="Tarif" Property="StartTime" Title="Start Zeit" Width="150px">
+                        <Template Context="tarif">
+                            @String.Format("{0:HH\\:mm}", tarif.StartTime)
+                        </Template>
+                        <EditTemplate Context="tarif">
+                            <RadzenDatePicker @bind-Value="tarif.StartTime" ShowTime="true" TimeOnly="true" DateFormat="HH:mm" Style="width:100%" />
+                        </EditTemplate>
+                    </RadzenDataGridColumn>
+                    <RadzenDataGridColumn TItem="Tarif" Property="EndTime" Title="End Zeit" Width="150px">
+                        <Template Context="tarif">
+                            @String.Format("{0:HH\\:mm}", tarif.EndTime)
+                        </Template>
+                        <EditTemplate Context="tarif">
+                            <RadzenDatePicker @bind-Value="tarif.EndTime" ShowTime="true" TimeOnly="true" DateFormat="HH:mm" Style="width:100%" />
+                        </EditTemplate>
+                    </RadzenDataGridColumn>
+                    <RadzenDataGridColumn TItem="Tarif" Property="StartDate" Title="Start Datum" Width="200px">
+                        <Template Context="tarif">
+                            @String.Format("{0:d}", tarif.StartDate)
+                        </Template>
+                        <EditTemplate Context="tarif">
+                            <RadzenDatePicker @bind-Value="tarif.StartDate" DateFormat="dd.MM.yyyy" Style="width:100%" />
+                        </EditTemplate>
+                    </RadzenDataGridColumn>
+                    <RadzenDataGridColumn TItem="Tarif" Property="EndDate" Title="End Datum" Width="200px">
+                        <Template Context="tarif">
+                            @tarif.EndDate?.ToString("dd.MM.yyyy")
+                        </Template>
+                        <EditTemplate Context="tarif">
+                            <RadzenDatePicker @bind-Value="tarif.EndDate" DateFormat="dd.MM.yyyy" Style="width:100%" />
+                        </EditTemplate>
+                    </RadzenDataGridColumn>
+                    <RadzenDataGridColumn TItem="Tarif" Property="WorkDay" Title="Wochentag" Width="200px">
+                        <Template Context="tarif">
+                            <RadzenCheckBox @bind-Value="tarif.WorkDay" Name="WorkDay" Disabled />
+                        </Template>
+                        <EditTemplate Context="tarif">
+                            <RadzenCheckBox @bind-Value="tarif.WorkDay" Name="WorkDay" />
+                        </EditTemplate>
+                    </RadzenDataGridColumn>
+                    <RadzenDataGridColumn TItem="Tarif" Context="whateaver" Filterable="false" Sortable="false" TextAlign="TextAlign.Center">
+                        <Template Context="tarif">
+                            <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Class="m-1" Click="@(args => EditTarifRow(tarif))" @onclick:stopPropagation="true">
+                            </RadzenButton>
+                        </Template>
+                        <EditTemplate Context="tarif">
+                            <RadzenButton Icon="save" Size="ButtonSize.Small" Click="@((args) => SaveTarifRow(tarif))" />
+                            <RadzenButton Icon="cancel" Size="ButtonSize.Small" ButtonStyle="ButtonStyle.Secondary" Click="@((args) => CancelTarifEdit(tarif))" />
+                        </EditTemplate>
+                    </RadzenDataGridColumn>
+                </Columns>
+            </RadzenDataGrid>
+        </RadzenFieldset>
+    }
     <div class="row justify-content-center">
         <div class="col-md-12 d-flex align-items-end justify-content-center" style="margin-top: 16px;">
             <RadzenButton ButtonType="ButtonType.Submit" Icon="save" Text="Speichern" />
@@ -151,6 +154,10 @@
     RadzenDataGrid<Floor>? floorGrid;
     RadzenDataGrid<Tarif>? tarifGrid;
 
+    List<Floor> floors = new List<Floor>();
+    List<Tarif> tarifs = new List<Tarif>();
+
+
     protected override async void OnInitialized()
     {
         base.OnInitialized();
@@ -158,6 +165,13 @@
         if (parkhausToEdit == null)
         {
             parkhausToEdit = new Parkhaus();
+        }
+        else
+        {
+            parkhausToEdit = await http.GetFromJsonAsync<Parkhaus>($"parkhaus/{parkhausToEdit.ParkhausId}");
+
+            floors = await http.GetFromJsonAsync<List<Floor>>($"parkhaus/GetFloors/{parkhausToEdit.ParkhausId}") ?? new List<Floor>();
+            tarifs = await http.GetFromJsonAsync<List<Tarif>>($"parkhaus/GetTarifs/{parkhausToEdit.ParkhausId}") ?? new List<Tarif>();
         }
 
         StateHasChanged();
@@ -173,7 +187,7 @@
         {
             _ = await http.PostAsJsonAsync("parkhaus", parkhaus);
         }
-        DialogService.Close();
+        StateHasChanged();
     }
 
     #region Floor Grid
@@ -213,23 +227,22 @@
         await floorGrid.InsertRow(floorToInsert);
     }
 
-    void OnUpdateFloorRow(Floor floor)
+    async void OnUpdateFloorRow(Floor floor)
     {
         if (floor == floorToInsert)
         {
             floorToInsert = null;
         }
-        var oldFloor = parkhausToEdit.Floors.FirstOrDefault(f => f.FloorId == floor.FloorId);
-
-        oldFloor.FloorNr = floor.FloorNr;
-        oldFloor.SlotCount = floor.SlotCount;
-
+        floor.Parkhaus = parkhausToEdit;
+        _ = await http.PostAsJsonAsync("parkhaus/UpdateFloor", floor);
+        
         StateHasChanged();
     }
 
     async void OnCreateFloorRow(Floor floor)
     {
-        parkhausToEdit.Floors.Add(floor);
+        floor.Parkhaus = parkhausToEdit;
+        var res = await http.PostAsJsonAsync("parkhaus/AddFloor", floor);
         StateHasChanged();
     }
 
@@ -275,26 +288,22 @@
 
         await tarifGrid.InsertRow(tarifToInsert);
     }
-    void OnUpdateTarifRow(Tarif tarif)
+    async void OnUpdateTarifRow(Tarif tarif)
     {
         if (tarif == tarifToInsert)
         {
             tarifToInsert = null;
         }
-        var oldTarif = parkhausToEdit.Tarifs.FirstOrDefault(f => f.TarifId == tarif.TarifId);
-
-        oldTarif.StartDate = tarif.StartDate;
-        oldTarif.EndDate = tarif.EndDate;
-        oldTarif.StartTime = tarif.StartTime;
-        oldTarif.EndTime = tarif.EndTime;
-        oldTarif.Preis = tarif.Preis;
+        tarif.Parkhaus = parkhausToEdit;
+        _ = await http.PostAsJsonAsync("parkhaus/UpdateTarif", tarif);
 
         StateHasChanged();
     }
 
     async void OnCreateTarifRow(Tarif tarif)
     {
-        parkhausToEdit.Tarifs.Add(tarif);
+        tarif.Parkhaus = parkhausToEdit;
+        _ = await http.PostAsJsonAsync("parkhaus/AddTarif", tarif);
         StateHasChanged();
     }
 

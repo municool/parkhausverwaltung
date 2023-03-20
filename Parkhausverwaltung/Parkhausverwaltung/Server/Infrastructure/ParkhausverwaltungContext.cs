@@ -38,7 +38,7 @@ public partial class ParkhausverwaltungContext : DbContext
             entity.ToTable("FLoor");
 
             entity.Property(e => e.FloorId)
-                .ValueGeneratedNever()
+                .ValueGeneratedOnAdd()
                 .HasColumnName("FLoorId");
 
             entity.HasOne(d => d.Parkhaus).WithMany(p => p.Floors)
@@ -55,7 +55,7 @@ public partial class ParkhausverwaltungContext : DbContext
 
             entity.HasIndex(e => e.MieterCode, "UQ__Mieter__C1793B1F6365E562").IsUnique();
 
-            entity.Property(e => e.MieterId).ValueGeneratedNever();
+            entity.Property(e => e.MieterId).ValueGeneratedOnAdd();
             entity.Property(e => e.EndDate).HasColumnType("datetime");
             entity.Property(e => e.Name).HasMaxLength(50);
             entity.Property(e => e.StartDate).HasColumnType("datetime");
@@ -70,7 +70,7 @@ public partial class ParkhausverwaltungContext : DbContext
         {
             entity.HasKey(e => e.ParkhausId).HasName("PK__Parkhaus__E7FDE3F48EE4CF3E");
 
-            entity.Property(e => e.ParkhausId).ValueGeneratedNever();
+            entity.Property(e => e.ParkhausId).ValueGeneratedOnAdd();
             entity.Property(e => e.Name).HasMaxLength(50);
         });
 
@@ -80,7 +80,7 @@ public partial class ParkhausverwaltungContext : DbContext
 
             entity.ToTable("Tarif");
 
-            entity.Property(e => e.TarifId).ValueGeneratedNever();
+            entity.Property(e => e.TarifId).ValueGeneratedOnAdd();
             entity.Property(e => e.EndDate).HasColumnType("datetime");
             entity.Property(e => e.Preis).HasColumnType("decimal(10, 1)");
             entity.Property(e => e.StartDate).HasColumnType("datetime");
@@ -97,7 +97,7 @@ public partial class ParkhausverwaltungContext : DbContext
 
             entity.ToTable("Visit");
 
-            entity.Property(e => e.VisitId).ValueGeneratedNever();
+            entity.Property(e => e.VisitId).ValueGeneratedOnAdd();
             entity.Property(e => e.Arrival).HasColumnType("datetime");
             entity.Property(e => e.Cost).HasColumnType("decimal(10, 1)");
             entity.Property(e => e.Departure).HasColumnType("datetime");

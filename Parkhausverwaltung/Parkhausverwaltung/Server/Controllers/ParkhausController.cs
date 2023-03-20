@@ -19,6 +19,7 @@ namespace Parkhausverwaltung.Server.Controllers
             _dbContextFactory = dbContextFactory;
         }
 
+        #region CRUD
 
         [HttpGet]
         public IEnumerable<Parkhaus> GetAllParkhauses()
@@ -35,6 +36,24 @@ namespace Parkhausverwaltung.Server.Controllers
             using (var context = _dbContextFactory.CreateDbContext())
             {
                 return context.Parkhaus.FirstOrDefault(v => v.ParkhausId == id);
+            }
+        }
+
+        [HttpGet("GetFloors/{id}")]
+        public List<Floor> GetFloorsByParkhausId(int id)
+        {
+            using (var context = _dbContextFactory.CreateDbContext())
+            {
+                return context.Floors.Where(v => v.ParkhausId == id).ToList();
+            }
+        }
+
+        [HttpGet("GetTarifs/{id}")]
+        public List<Tarif> GetTarifsByParkhausId(int id)
+        {
+            using (var context = _dbContextFactory.CreateDbContext())
+            {
+                return context.Tarifs.Where(v => v.ParkhausId == id).ToList();
             }
         }
 
@@ -74,6 +93,76 @@ namespace Parkhausverwaltung.Server.Controllers
             }
             return Ok();
         }
+
+        [HttpPost("UpdateFloor")]
+        public IActionResult UpdateFloor([FromBody] Floor floor)
+        {
+            using (var context = _dbContextFactory.CreateDbContext())
+            {
+                var oldFloor = context.Floors.Find(floor.FloorId);
+
+                if (oldFloor != null)
+                {
+                    oldFloor.FloorNr = floor.FloorNr;
+                    oldFloor.SlotCount = floor.SlotCount;
+
+                    context.Floors.Update(oldFloor);
+                    context.SaveChanges();
+                }
+            }
+            return Ok();
+        }
+        [HttpPost("UpdateTarif")]
+        public IActionResult UpdateTarif([FromBody] Tarif tarif)
+        {
+            using (var context = _dbContextFactory.CreateDbContext())
+            {
+                var oldTarif = context.Tarifs.Find(tarif.TarifId);
+
+                if (oldTarif != null)
+                {
+                    oldTarif.StartDate = tarif.StartDate;
+                    oldTarif.EndDate = tarif.EndDate;
+                    oldTarif.StartTime = tarif.StartTime;
+                    oldTarif.EndTime = tarif.EndTime;
+                    oldTarif.Preis = tarif.Preis;
+
+                    context.Tarifs.Update(oldTarif);
+                    context.SaveChanges();
+                }
+            }
+            return Ok();
+        }
+
+        [HttpPost("AddFloor")]
+        public IActionResult AddFloor([FromBody] Floor floor)
+        {
+            using (var context = _dbContextFactory.CreateDbContext())
+            {
+                floor.ParkhausId = floor.Parkhaus.ParkhausId;
+                floor.Parkhaus = null;
+
+                context.Floors.Add(floor);
+                context.SaveChanges();
+            }
+            return Ok();
+        }
+
+        [HttpPost("AddTarif")]
+        public IActionResult AddTarif([FromBody] Tarif tarif)
+        {
+            using (var context = _dbContextFactory.CreateDbContext())
+            {
+                tarif.ParkhausId = tarif.Parkhaus.ParkhausId;
+                tarif.Parkhaus = null;
+
+                context.Tarifs.Add(tarif);
+                context.SaveChanges();
+            }
+            return Ok();
+        }
+        #endregion
+
 
         [HttpGet("GetParkticket/{parkhausId}")]
         public ActionResult<Visit> GetParkticket(int parkhausId)
